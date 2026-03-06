@@ -11,39 +11,32 @@ import { Info } from "lucide-react";
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const loginWithGoogle = useGoogleLogin({
+    const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      try {
-        const res = await fetch(
-          "https://www.googleapis.com/oauth2/v3/userinfo",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.access_token}`,
-            },
-          },
-        );
+    try {
+     
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: tokenResponse.access_token }),
+      });
 
-        const userProfile = await res.json();
+      const result = await response.json();
 
-        console.log("Full Google Profile:", userProfile);
-
-        const googleId = userProfile.sub;
-        const email = userProfile.email;
-        const profilePhoto = userProfile.picture;
-        const fullName = userProfile.name;
-
-        if (!email.endsWith("@tup.edu.ph")) {
-          console.error("Access Denied: Must use a TUP institutional email.");
-          return;
-        }
-
+      if (response.ok) {
+        // Data is now saved in the browser so Dashboard can use it
+        localStorage.setItem("user", JSON.stringify(result.user));
+        console.log("Login Successful!", result.user);
         navigate("/dashboard");
-      } catch (error) {
-        console.error("Failed to fetch user profile:", error);
+      } else {
+        alert(result.error);
       }
-    },
-    onError: (error) => console.log("Login Failed:", error),
-  });
+    } catch (err) {
+      console.error("Make sure your backend server is running on port 3000!", err);
+    }
+    }, // Close onSuccess
+      onError: (error) => console.log("Login Failed:", error), // Add the error handler
+    }); //
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen font-lexend">
