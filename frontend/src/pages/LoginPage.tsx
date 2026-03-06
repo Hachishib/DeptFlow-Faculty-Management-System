@@ -2,10 +2,20 @@ import school from "../assets/images/school-tup.webp";
 import tupLogo from "../assets/tup-logo.svg";
 import appLogo from "../assets/logo.png";
 import google from "../assets/google.png";
+import React from 'react';
+
 
 import { Info } from "lucide-react";
 
 export default function LoginPage() {
+  React.useEffect(() => {
+    // example API call to the backend
+    fetch('/api/hello')
+      .then(res => res.json())
+      .then(data => console.log('backend response', data))
+      .catch(err => console.error('fetch error', err));
+  }, []);
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen font-lexend">
       {/* Left Panel */}
