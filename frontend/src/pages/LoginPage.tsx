@@ -1,20 +1,49 @@
+import { useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
+
 import school from "../assets/images/school-tup.webp";
 import tupLogo from "../assets/tup-logo.svg";
 import appLogo from "../assets/logo.png";
 import google from "../assets/google.png";
-import React from 'react';
-
 
 import { Info } from "lucide-react";
 
 export default function LoginPage() {
-  React.useEffect(() => {
-    // example API call to the backend
-    fetch('/api/hello')
-      .then(res => res.json())
-      .then(data => console.log('backend response', data))
-      .catch(err => console.error('fetch error', err));
-  }, []);
+  const navigate = useNavigate();
+
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await fetch(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          },
+        );
+
+        const userProfile = await res.json();
+
+        console.log("Full Google Profile:", userProfile);
+
+        const googleId = userProfile.sub;
+        const email = userProfile.email;
+        const profilePhoto = userProfile.picture;
+        const fullName = userProfile.name;
+
+        if (!email.endsWith("@tup.edu.ph")) {
+          console.error("Access Denied: Must use a TUP institutional email.");
+          return;
+        }
+
+        navigate("/dashboard");
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    },
+    onError: (error) => console.log("Login Failed:", error),
+  });
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen font-lexend">
@@ -62,18 +91,15 @@ export default function LoginPage() {
           Faculty Management System with AI assisted Scheduling
         </h2>
 
-        <form
-          action="POST"
-          className="mt-5 sm:mt-10 w-full flex justify-center"
-        >
+        <div className="mt-5 sm:mt-10 w-full flex justify-center">
           <button
-            type="submit"
+            onClick={() => loginWithGoogle()}
             className="flex items-center justify-center gap-3 sm:gap-5 text-primary font-bold border-2 rounded-[24px] py-3.5 sm:py-5 px-7 sm:px-14 lg:px-20 cursor-pointer text-sm sm:text-base w-full max-w-[420px] sm:w-auto transition-all duration-200 hover:bg-primary hover:text-white "
           >
             <img src={google} alt="google" className="w-[18px] sm:w-auto" />
             Continue with TUP email
           </button>
-        </form>
+        </div>
 
         <div className="flex gap-1 w-full max-w-[300px] sm:max-w-[420px] py-2 px-3 mt-3 sm:mt-5 bg-[#F8FAFC] border border-[#F1F5F9] rounded-2xl">
           <Info
