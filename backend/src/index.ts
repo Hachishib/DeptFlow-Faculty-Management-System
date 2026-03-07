@@ -23,6 +23,13 @@ app.get('/api/auth/login', (req, res) => {
 });
 // ---------------------------------
 
+
+app.post("/message", (req, res) => {
+      const { message } = req.body;
+      console.log("Message received from frontend:", message);
+      res.json({ status: "Message logged successfully" });
+});
+
 app.post('/api/auth/login', verifyGoogleToken);
 
 app.listen(PORT, () => {
