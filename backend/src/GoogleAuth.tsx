@@ -26,7 +26,6 @@ export const verifyGoogleToken = async (req: Request, res: Response) => {
     }
 
     const userProfile = (await userResponse.json()) as GoogleUser;
-
     console.log("✅ Google Profile fetched:");
     console.log("  - ID:", userProfile.id);
     console.log("  - Email:", userProfile.email);

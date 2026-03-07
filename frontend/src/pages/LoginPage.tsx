@@ -24,7 +24,6 @@ export default function LoginPage() {
       const result = await response.json();
 
       if (response.ok) {
-        // Data is now saved in the browser so Dashboard can use it
         localStorage.setItem("user", JSON.stringify(result.user));
         console.log("Login Successful!", result.user);
         navigate("/dashboard");
