@@ -40,7 +40,8 @@ export default function LoginPage() {
           return;
         }
 
-        const success = handleGoogleAuth({googleId, email, profilePhoto, fullName})
+        const success = await handleGoogleAuth({googleId, email, profilePhoto, fullName});
+        console.log("Message from backend: ", success.message);
 
         navigate("/dashboard");
       } catch (error) {
