@@ -1,0 +1,38 @@
+[
+  {
+    "id": "f001",
+    "name": "Prof. Maria Santos",
+    "type": "Full Time",
+    "units": {
+      "current": 23,
+      "max": 21
+    }
+  },
+  {
+    "id": "f002",
+    "name": "Prof. Carlo Reyes",
+    "type": "Full Time",
+    "units": {
+      "current": 19,
+      "max": 21
+    }
+  },
+  {
+    "id": "f003",
+    "name": "Prof. Ana Cruz",
+    "type": "Part Time",
+    "units": {
+      "current": 9,
+      "max": 12
+    }
+  },
+  {
+    "id": "f004",
+    "name": "Prof. Daniel Lim",
+    "type": "Full Time",
+    "units": {
+      "current": 12,
+      "max": 21
+    }
+  }
+]

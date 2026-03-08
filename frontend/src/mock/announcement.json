@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "title": "Grade Submission Reminder",
+    "date": "2026-03-05",
+    "preview": "All faculty are required to submit final grades by March 12.",
+    "pinned": true
+  },
+  {
+    "id": "2",
+    "title": "Faculty Meeting — March 10",
+    "date": "2026-03-03",
+    "preview": "Mandatory faculty meeting at 10AM, AVR Room 3."
+  },
+  {
+    "id": "3",
+    "title": "CHED Memo: Updated Curriculum",
+    "date": "2026-03-01",
+    "preview": "Please review the updated BSCS curriculum effective AY 2026."
+  },
+  {
+    "id": "4",
+    "title": "Reminder: Profile Update Deadline",
+    "date": "2026-02-28",
+    "preview": "All faculty must update their profiles before March 15."
+  }
+]
