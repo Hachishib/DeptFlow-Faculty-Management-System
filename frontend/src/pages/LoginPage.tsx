@@ -43,7 +43,7 @@ export default function LoginPage() {
         const success = await handleGoogleAuth({googleId, email, profilePhoto, fullName});
         console.log("Message from backend: ", success.message);
 
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
