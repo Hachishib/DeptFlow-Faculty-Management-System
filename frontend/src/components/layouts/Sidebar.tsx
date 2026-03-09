@@ -5,6 +5,7 @@ import {
   ClipboardClock,
   Megaphone,
   ChartColumnBig,
+  CircleUserRound,
   LogOut,
 } from "lucide-react";
 
@@ -43,6 +44,11 @@ const NAV_ITEMS: NavItem[] = [
     id: "analytics",
     label: "Analytics",
     icon: <ChartColumnBig size={18} />,
+  },
+  {
+    id: "profile",
+    label: "My Profile",
+    icon: <CircleUserRound size={18} />,
   },
 ];
 

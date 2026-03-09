@@ -1,5 +1,4 @@
 import { getLoadColor, getLoadWidth } from "../../utils/loadItem";
-
 import type { LoadItem } from "../../types/load";
 
 type Props = {
@@ -11,12 +10,14 @@ export default function FacultyLoadItem({ item }: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm font-medium text-gray-700">{item.name}</span>
+      <div className="flex items-start sm:items-center justify-between mb-1 gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs sm:text-sm font-medium text-gray-700">
+            {item.name}
+          </span>
 
           <span
-            className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+            className={`text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full ${
               item.type === "Full Time"
                 ? "bg-blue-100 text-blue-600"
                 : "bg-purple-100 text-purple-600"
@@ -27,7 +28,7 @@ export default function FacultyLoadItem({ item }: Props) {
         </div>
 
         <span
-          className={`text-sm font-normal ${
+          className={`text-[10px] sm:text-xs md:text-sm font-normal ${
             isOver ? "text-red-500" : "text-gray-500"
           }`}
         >

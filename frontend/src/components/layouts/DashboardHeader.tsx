@@ -25,17 +25,25 @@ export default function DashboardHeader({
   }, []);
 
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold ">Good Day, {name}</h1>
-        <p className="text-sm text-gray-400 mt-1">
-          {role} · {department} · {semester}
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
+          Good Day, {name}
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-400 mt-1 leading-snug">
+          <span className="block sm:inline">{role}</span>
+          <span className="hidden sm:inline"> · </span>
+          <span className="block sm:inline">{department}</span>
+          <span className="hidden sm:inline"> · </span>
+          <span className="block sm:inline">{semester}</span>
         </p>
       </div>
 
-      <div className="text-right">
-        <p className="text-sm ">{dateTime.date}</p>
-        <p className="text-xl font-bold text-primary">{dateTime.time}</p>
+      <div className="text-left sm:text-right shrink-0">
+        <p className="text-xs sm:text-sm text-gray-500">{dateTime.date}</p>
+        <p className="text-lg sm:text-xl font-bold text-primary">
+          {dateTime.time}
+        </p>
       </div>
     </div>
   );

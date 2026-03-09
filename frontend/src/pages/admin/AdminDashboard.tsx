@@ -76,7 +76,7 @@ export default function AdminDashboard(){
         semester="1st Semester AY 2025–2026"
       />
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         {STAT_CARDS.map((card) => (
           <StatCard key={card.id} card={card} />
         ))}
@@ -84,12 +84,12 @@ export default function AdminDashboard(){
 
       <AiConflictAlert />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1">
         <TeachingLoadMonitor />
         <AnnouncementCard announcements={announcementData} />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         {QUICK_ACTIONS.map((action) => (
           <QuickActionCard key={action.id} action={action} />
         ))}

@@ -12,10 +12,14 @@ const loadItems: LoadItem[] = (loadItemsData as any[]).map((item) => ({
 
 export default function TeachingLoadMonitor() {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 border-t-[3px] border-t-primary">
+    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border-t-[3px] border-t-primary">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-lg font-bold text-gray-800">Teaching Load Monitor</p>
-        <span className="text-sm text-gray-400">1st Semester AY 2025-2026</span>
+        <p className="text-sm sm:text-base lg:text-lg font-bold text-gray-800">
+          Teaching Load Monitor
+        </p>
+        <span className="text-xs sm:text-sm text-gray-400 text-right">
+          1st Semester AY 2025-2026
+        </span>
       </div>
 
       <div className="flex flex-col gap-3">
