@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "subjectCode": "CS 211",
+    "subject": "Data Structures",
+    "section": "BSCS 2-A",
+    "room": "Lab 1",
+    "days": ["Monday", "Wednesday", "Friday"],
+    "startTime": "8:00 AM",
+    "endTime": "9:30 AM",
+    "color": "blue"
+  },
+  {
+    "id": "2",
+    "subjectCode": "CS 312",
+    "subject": "Operating Systems",
+    "section": "BSCS 3-B",
+    "room": "Room 4",
+    "days": ["Tuesday", "Thursday"],
+    "startTime": "10:00 AM",
+    "endTime": "12:00 PM",
+    "color": "purple"
+  },
+  {
+    "id": "3",
+    "subjectCode": "CS 401",
+    "subject": "Software Engineering",
+    "section": "BSCS 4-A",
+    "room": "Lab 3",
+    "days": ["Monday", "Wednesday"],
+    "startTime": "1:00 PM",
+    "endTime": "3:30 PM",
+    "color": "green"
+  },
+  {
+    "id": "4",
+    "subjectCode": "CS 112",
+    "subject": "Discrete Mathematics",
+    "section": "BSCS 1-C",
+    "room": "Room 2",
+    "days": ["Tuesday", "Thursday", "Saturday"],
+    "startTime": "8:30 AM",
+    "endTime": "10:00 AM",
+    "color": "amber"
+  },
+  {
+    "id": "5",
+    "subjectCode": "CS 402",
+    "subject": "Capstone Project",
+    "section": "BSCS 4-B",
+    "room": "Lab 2",
+    "days": ["Friday"],
+    "startTime": "2:30 PM",
+    "endTime": "5:30 PM",
+    "color": "rose"
+  },
+  {
+    "id": "6",
+    "subjectCode": "CS 311",
+    "subject": "Database Systems",
+    "section": "BSCS 3-A",
+    "room": "Lab 2",
+    "days": ["Monday", "Wednesday", "Friday"],
+    "startTime": "4:00 PM",
+    "endTime": "5:30 PM",
+    "color": "amber"
+  },
+  {
+    "id": "7",
+    "subjectCode": "CS 313",
+    "subject": "Computer Networks",
+    "section": "BSCS 3-C",
+    "room": "Room 5",
+    "days": ["Tuesday", "Saturday"],
+    "startTime": "6:00 PM",
+    "endTime": "7:30 PM",
+    "color": "blue"
+  }
+]

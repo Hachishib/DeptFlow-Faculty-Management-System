@@ -8,6 +8,7 @@ import {
   CircleUserRound,
   LogOut,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type NavItem = {
   id: string;
@@ -26,12 +27,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: <LayoutDashboard size={18} />,
   },
   {
-    id: "manage-faculty",
+    id: "manageFaculty",
     label: "Manage Faculty",
     icon: <Users size={18} />,
   },
   {
-    id: "manage-schedule",
+    id: "manageSchedule",
     label: "Manage Schedule",
     icon: <ClipboardClock size={18} />,
   },
@@ -54,10 +55,20 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Sidebar({ onNavigate }: SidebarProps) {
   const [activeId, setActiveId] = useState<string>("dashboard");
+  const navigate = useNavigate();
 
   function handleNavClick(id: string) {
     setActiveId(id);
-    onNavigate?.(); 
+    const pathMap: Record<string, string> = {
+      dashboard: "/admin/dashboard",
+      announcements: "admin/announcements",
+      analytics: "/admin/analytics",
+      profile: "/admin/profile",
+      manageSchedule: "/admin/manage-schedule",
+      manageFaculty: "/admin/manage-faculty",
+    };
+    navigate(pathMap[id]);
+    onNavigate?.();
   }
 
   return (

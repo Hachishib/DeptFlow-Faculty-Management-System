@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminLayout from "./components/layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Error404 from "./pages/Error404";
+import MyProfile from "./pages/MyProfile";
 
 function App() {
   return (
@@ -13,9 +14,10 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="profile" element={<MyProfile />} />
         </Route>
 
-        <Route path="*" element={<Error404 />}/> 
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </BrowserRouter>
   );
