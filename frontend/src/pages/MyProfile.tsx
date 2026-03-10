@@ -81,6 +81,7 @@ export default function MyProfile() {
           )}
         </div>
       </div>
+      
 
       {/* Profile card and tabs */}
       <div className="flex flex-col lg:flex-row gap-6">
