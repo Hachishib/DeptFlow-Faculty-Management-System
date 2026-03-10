@@ -5,6 +5,7 @@ import AdminLayout from "./components/layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Error404 from "./pages/Error404";
 import MyProfile from "./pages/MyProfile";
+import AnnouncementsPage from "./pages/admin/AdminAnnouncement";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="profile" element={<MyProfile />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
         </Route>
 
         <Route path="*" element={<Error404 />} />

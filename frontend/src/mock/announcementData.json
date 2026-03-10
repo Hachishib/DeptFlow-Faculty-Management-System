@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Grade Submission Deadline — June 30",
+    "body": "All faculty are required to submit final grades no later than June 30, 2026. Please log in to the official TUP portal and encode all grades under your assigned subjects. Late submissions will be escalated to the department head. Coordinate with the registrar for any encoding issues.",
+    "date": "2026-06-20",
+    "author": "Dr. Rivera",
+    "pinned": true,
+    "audience": "All Faculty",
+    "tag": "Reminder"
+  },
+  {
+    "id": "2",
+    "title": "Mandatory Faculty Meeting — July 3, 10AM",
+    "body": "A mandatory faculty meeting is scheduled on July 3, 2026 at 10:00 AM in AVR Room 301. Agenda includes curriculum updates, workload assignments for the next semester, and faculty development plans. Attendance is required.",
+    "date": "2026-06-18",
+    "author": "Dr. Rivera",
+    "pinned": true,
+    "audience": "All Faculty",
+    "tag": "Event"
+  },
+  {
+    "id": "3",
+    "title": "CHED Memorandum: Updated BSCS Curriculum",
+    "body": "CHED has released an updated memorandum regarding the Bachelor of Science in Computer Science curriculum effective AY 2026–2027. Faculty handling CS core subjects are required to review the updated course descriptions and submit revised syllabi by July 15.",
+    "date": "2026-06-15",
+    "author": "Dr. Rivera",
+    "pinned": false,
+    "audience": "All Faculty",
+    "tag": "General"
+  },
+  {
+    "id": "4",
+    "title": "URGENT: TUP Portal Maintenance — June 25",
+    "body": "The TUP faculty portal will undergo scheduled maintenance on June 25, 2026 from 10:00 PM to 2:00 AM. During this window, grade encoding and document submission will be unavailable. Please complete all pending transactions before the maintenance window.",
+    "date": "2026-06-14",
+    "author": "Dr. Rivera",
+    "pinned": false,
+    "audience": "All Faculty",
+    "tag": "Urgent"
+  },
+  {
+    "id": "5",
+    "title": "Research Grant Applications Now Open",
+    "body": "The TUP Research and Development Office is now accepting research grant applications for AY 2026–2027. Full-time faculty members with at least 2 years of service are eligible. Deadline for submissions is July 31.",
+    "date": "2026-06-12",
+    "author": "Dr. Rivera",
+    "pinned": false,
+    "audience": "Full-time",
+    "tag": "General"
+  },
+  {
+    "id": "6",
+    "title": "Faculty Profile Update Deadline — June 28",
+    "body": "All faculty members are required to update their profiles in FIMS before June 28, 2026. This includes uploading updated credentials, certifications, and research publications for the annual faculty evaluation.",
+    "date": "2026-06-10",
+    "author": "Dr. Rivera",
+    "pinned": false,
+    "audience": "All Faculty",
+    "tag": "Reminder"
+  }
+]

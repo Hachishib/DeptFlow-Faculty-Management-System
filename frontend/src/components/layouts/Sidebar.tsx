@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -54,14 +55,16 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Sidebar({ onNavigate }: SidebarProps) {
-  const [activeId, setActiveId] = useState<string>("dashboard");
+  const location = useLocation();
+  const currentPath = location.pathname.split("/");
+  const [activeId, setActiveId] = useState<string>(currentPath[2]);
   const navigate = useNavigate();
 
   function handleNavClick(id: string) {
     setActiveId(id);
     const pathMap: Record<string, string> = {
       dashboard: "/admin/dashboard",
-      announcements: "admin/announcements",
+      announcements: "/admin/announcements",
       analytics: "/admin/analytics",
       profile: "/admin/profile",
       manageSchedule: "/admin/manage-schedule",
