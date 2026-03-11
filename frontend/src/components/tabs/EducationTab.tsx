@@ -1,16 +1,30 @@
 import { GraduationCap, Trash2, Plus } from "lucide-react";
+import { useState } from "react";
 import SectionHeader from "../ui/SectionHeader";
+import AddEducationModal from "../modals/AddEducationModal";
 import type { Education } from "../../types/education";
 
 type EducationTabProps = {
   education: Education[];
+  setEducation: (value: Education[]) => void;
   editing: boolean;
 };
 
 export default function EducationTab({
   education,
+  setEducation,
   editing,
 }: EducationTabProps) {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleAdd = (item: Education) => {
+    setEducation([item, ...education]);
+  };
+
+  const handleDelete = (id: string) => {
+    setEducation(education.filter((e) => e.id !== id));
+  };
+
   return (
     <div>
       <SectionHeader title="Educational Background" />
@@ -36,7 +50,10 @@ export default function EducationTab({
             </div>
 
             {editing && (
-              <button className="text-gray-300 hover:text-red-400">
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="text-gray-300 hover:text-red-400 transition-colors"
+              >
                 <Trash2 size={15} />
               </button>
             )}
@@ -45,10 +62,19 @@ export default function EducationTab({
       </div>
 
       {editing && (
-        <button className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]"
+        >
           <Plus size={14} /> Add Education
         </button>
       )}
+
+      <AddEducationModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onAdd={handleAdd}
+      />
     </div>
   );
 }

@@ -1,16 +1,52 @@
 import { Award, Trash2, Upload } from "lucide-react";
+import { useState } from "react";
 import SectionHeader from "../ui/SectionHeader";
+import AddCredentialModal from "../modals/AddCredentialModal";
 import type { Credential } from "../../types/credential";
 
 type CredentialsTabProps = {
   credentials: Credential[];
+  setCredentials: (value: Credential[]) => void;
   editing: boolean;
 };
 
 export default function CredentialsTab({
   credentials,
+  setCredentials,
   editing,
 }: CredentialsTabProps) {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleAdd = (item: Credential) => {
+    setCredentials([item, ...credentials]);
+  };
+
+  const handleDelete = (id: string) => {
+    setCredentials(credentials.filter((c) => c.id !== id));
+  };
+
+  // Format YYYY-MM → "Mon YYYY"
+  const fmt = (val: string) => {
+    if (!val) return "—";
+    const [y, m] = val.split("-");
+    if (!m) return val;
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return `${months[parseInt(m, 10) - 1]} ${y}`;
+  };
+
   return (
     <div>
       <SectionHeader title="Certifications & Licenses" />
@@ -27,12 +63,19 @@ export default function CredentialsTab({
 
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800">{item.name}</p>
-              <p className="text-xs text-gray-400">Issued: {item.issued}</p>
-              <p className="text-xs text-gray-400">Expires: {item.expiry}</p>
+              <p className="text-xs text-gray-400">
+                Issued: {fmt(item.issued)}
+              </p>
+              <p className="text-xs text-gray-400">
+                Expires: {fmt(item.expiry)}
+              </p>
             </div>
 
             {editing && (
-              <button className="text-gray-300 hover:text-red-400">
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="text-gray-300 hover:text-red-400 transition-colors"
+              >
                 <Trash2 size={15} />
               </button>
             )}
@@ -41,10 +84,19 @@ export default function CredentialsTab({
       </div>
 
       {editing && (
-        <button className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]"
+        >
           <Upload size={14} /> Upload Credential
         </button>
       )}
+
+      <AddCredentialModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onAdd={handleAdd}
+      />
     </div>
   );
 }

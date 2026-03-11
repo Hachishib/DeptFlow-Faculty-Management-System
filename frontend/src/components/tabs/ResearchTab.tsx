@@ -1,13 +1,30 @@
 import { BookOpen, Trash2, Plus } from "lucide-react";
+import { useState } from "react";
 import SectionHeader from "../ui/SectionHeader";
+import AddResearchModal from "../modals/AddResearchModal";
 import type { Research } from "../../types/research";
 
 type ResearchTabProps = {
   research: Research[];
+  setResearch: (value: Research[]) => void;
   editing: boolean;
 };
 
-export default function ResearchTab({ research, editing }: ResearchTabProps) {
+export default function ResearchTab({
+  research,
+  setResearch,
+  editing,
+}: ResearchTabProps) {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleAdd = (item: Research) => {
+    setResearch([item, ...research]);
+  };
+
+  const handleDelete = (id: string) => {
+    setResearch(research.filter((r) => r.id !== id));
+  };
+
   return (
     <div>
       <SectionHeader title="Research & Publications" />
@@ -32,24 +49,18 @@ export default function ResearchTab({ research, editing }: ResearchTabProps) {
               )}
 
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    item.type === "Publication"
-                      ? "bg-blue-100 text-blue-600"
-                      : item.type === "Research"
-                        ? "bg-purple-100 text-purple-600"
-                        : "bg-green-100 text-green-600"
-                  }`}
-                >
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-600">
                   {item.type}
                 </span>
-
                 <span className="text-[10px] text-gray-400">{item.year}</span>
               </div>
             </div>
 
             {editing && (
-              <button className="text-gray-300 hover:text-red-400">
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="text-gray-300 hover:text-red-400 transition-colors"
+              >
                 <Trash2 size={15} />
               </button>
             )}
@@ -58,10 +69,19 @@ export default function ResearchTab({ research, editing }: ResearchTabProps) {
       </div>
 
       {editing && (
-        <button className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-[#880000]/30 rounded-lg text-xs text-[#880000] font-medium hover:bg-[#FEF2F2]"
+        >
           <Plus size={14} /> Add Research
         </button>
       )}
+
+      <AddResearchModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onAdd={handleAdd}
+      />
     </div>
   );
 }

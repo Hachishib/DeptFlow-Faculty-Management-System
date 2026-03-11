@@ -111,7 +111,7 @@ export default function FacultyProfileModal({
                 employmentType={member.personal.employmentType}
                 editing={false}
               />
-              <TeachingLoadMonitor schedule={member.schedule} />
+              <TeachingLoadMonitor schedule={member.schedule} variant="card" />
             </div>
 
             {/* Right — ProfileTabs + ProfileContent */}

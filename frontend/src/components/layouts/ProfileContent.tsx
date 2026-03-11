@@ -1,9 +1,3 @@
-// ── components/layouts/ProfileContent.tsx ────────────────
-//
-// Accepts education, credentials, research as optional props.
-// Falls back to mock data when not provided (e.g. MyProfile before DB wiring).
-// ManageFacultyPage passes real faculty data — no duplication needed.
-
 import { useState } from "react";
 import type { Personal } from "../../types/personal";
 import type { Tab } from "../../types/profileTab";
@@ -58,19 +52,19 @@ export default function ProfileContent({
   editing,
   personal,
   setPersonal,
-  education,
-  credentials,
-  research,
+  education: educationProp,
+  credentials: credentialsProp,
+  research: researchProp,
 }: ProfileContentProps) {
-  // Only initialise mock state when the caller didn't provide data.
-  // When real data is passed as props, these useState calls are ignored.
-  const [mockEducation] = useState<Education[]>(MOCK_EDUCATION);
-  const [mockCredentials] = useState<Credential[]>(MOCK_CREDENTIALS);
-  const [mockResearch] = useState<Research[]>(MOCK_RESEARCH);
-
-  const resolvedEducation = education ?? mockEducation;
-  const resolvedCredentials = credentials ?? mockCredentials;
-  const resolvedResearch = research ?? mockResearch;
+  const [education, setEducation] = useState<Education[]>(
+    educationProp ?? MOCK_EDUCATION,
+  );
+  const [credentials, setCredentials] = useState<Credential[]>(
+    credentialsProp ?? MOCK_CREDENTIALS,
+  );
+  const [research, setResearch] = useState<Research[]>(
+    researchProp ?? MOCK_RESEARCH,
+  );
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 sm:p-6">
@@ -82,13 +76,25 @@ export default function ProfileContent({
         />
       )}
       {activeTab === "education" && (
-        <EducationTab education={resolvedEducation} editing={editing} />
+        <EducationTab
+          education={education}
+          setEducation={setEducation}
+          editing={editing}
+        />
       )}
       {activeTab === "credentials" && (
-        <CredentialsTab credentials={resolvedCredentials} editing={editing} />
+        <CredentialsTab
+          credentials={credentials}
+          setCredentials={setCredentials}
+          editing={editing}
+        />
       )}
       {activeTab === "research" && (
-        <ResearchTab research={resolvedResearch} editing={editing} />
+        <ResearchTab
+          research={research}
+          setResearch={setResearch}
+          editing={editing}
+        />
       )}
     </div>
   );

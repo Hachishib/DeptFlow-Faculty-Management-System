@@ -1,4 +1,5 @@
 import { Mail, Phone, BadgeCheck, Building2, Upload } from "lucide-react";
+import { useRef } from "react";
 import placeholder from "../../assets/profile-placeholder.svg";
 
 type ProfileCardProps = {
@@ -10,9 +11,9 @@ type ProfileCardProps = {
   employeeId: string;
   employmentType: string;
   editing: boolean;
-  onUploadPhoto?: () => void;
+  photo?: string | null;
+  onUploadPhoto?: (file: File) => void;
 };
-
 
 export default function ProfileCard({
   firstName,
@@ -23,33 +24,56 @@ export default function ProfileCard({
   employeeId,
   employmentType,
   editing,
+  photo,
   onUploadPhoto,
 }: ProfileCardProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleButtonClick() {
+    fileInputRef.current?.click();
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) onUploadPhoto?.(file);
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      {/* Profile Pic*/}
+      {/* Profile Pic */}
       <div className="h-28 bg-[#880000] relative">
         <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
           <div className="relative">
             <img
-              src={placeholder}
+              src={photo || placeholder}
               alt="profile-photo"
-              className="w-20 h-20 rounded-full border-4 border-white bg-white flex items-center justify-center text-xs font-bold shadow-sm"
+              className="w-20 h-20 rounded-full border-4 border-white bg-white object-cover shadow-sm"
             />
+
             {editing && (
-              <button
-                onClick={onUploadPhoto}
-                className="absolute bottom-0 right-0 bg-[#880000] text-white rounded-full p-1.5 hover:bg-[#6B0000] transition-colors cursor-pointer"
-              >
-                <Upload size={11} />
-              </button>
+              <>
+                <button
+                  onClick={handleButtonClick}
+                  className="absolute bottom-0 right-0 bg-[#880000] text-white rounded-full p-1.5 hover:bg-[#6B0000] transition-colors cursor-pointer"
+                >
+                  <Upload size={11} />
+                </button>
+
+                {/* Hidden file input */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </>
             )}
           </div>
         </div>
       </div>
 
-      {/*Info */}
+      {/* Info */}
       <div className="pt-12 pb-5 px-5 text-center">
         <p className="text-lg font-bold text-gray-800">
           {firstName} {lastName}

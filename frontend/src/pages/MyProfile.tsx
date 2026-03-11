@@ -13,6 +13,7 @@ import MySchedule from "../components/layouts/MySchedule";
 export default function MyProfile() {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
   const [editing, setEditing] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
 
   const [personal, setPersonal] = useState<Personal>({
     firstName: "Dan Jheniel",
@@ -41,6 +42,11 @@ export default function MyProfile() {
   function handleCancel() {
     setPersonal(snapshot);
     setEditing(false);
+  }
+
+  function handleUploadPhoto(file: File) {
+    const imageUrl = URL.createObjectURL(file);
+    setPhoto(imageUrl);
   }
 
   return (
@@ -94,7 +100,8 @@ export default function MyProfile() {
             employeeId={personal.employeeId}
             employmentType={personal.employmentType}
             editing={editing}
-            onUploadPhoto={() => console.log("Upload photo")}
+            photo={photo}
+            onUploadPhoto={handleUploadPhoto}
           />
           <TeachingLoadCard />
         </div>
