@@ -1,0 +1,228 @@
+[
+  {
+    "id": "1",
+    "personal": {
+      "firstName": "Elena",
+      "lastName": "Rivera",
+      "email": "erivera@tup.edu.ph",
+      "phone": "+63 912 345 6789",
+      "employeeId": "TUP-2018-0042",
+      "designation": "Associate Professor II",
+      "employmentType": "Full-time",
+      "dateHired": "2018-06-01",
+      "status": "Active"
+    },
+    "education": [
+      {
+        "id": "1",
+        "degree": "Doctor of Information Technology",
+        "school": "PLM",
+        "year": "2021"
+      },
+      {
+        "id": "2",
+        "degree": "Master of Science in IT",
+        "school": "TUP",
+        "year": "2016"
+      },
+      {
+        "id": "3",
+        "degree": "BS Computer Science",
+        "school": "TUP",
+        "year": "2007"
+      }
+    ],
+    "credentials": [
+      {
+        "id": "1",
+        "name": "Civil Service Eligibility",
+        "issued": "2008",
+        "expiry": "N/A",
+        "status": "Valid"
+      },
+      {
+        "id": "2",
+        "name": "PRC License — CS",
+        "issued": "2018",
+        "expiry": "2028",
+        "status": "Valid"
+      }
+    ],
+    "research": [
+      {
+        "id": "1",
+        "title": "AI-Based Faculty Workload Prediction",
+        "journal": "Int. Journal of Computing",
+        "year": "2023",
+        "type": "Publication"
+      }
+    ],
+    "schedule": [
+      {
+        "id": "1",
+        "subjectCode": "CS 211",
+        "subject": "Data Structures",
+        "section": "BSCS 2-A",
+        "room": "Lab 1",
+        "days": ["Monday", "Wednesday", "Friday"],
+        "startTime": "8:00 AM",
+        "endTime": "9:30 AM",
+        "color": "blue"
+      },
+      {
+        "id": "2",
+        "subjectCode": "CS 401",
+        "subject": "Software Engineering",
+        "section": "BSCS 4-A",
+        "room": "Lab 3",
+        "days": ["Tuesday", "Thursday"],
+        "startTime": "10:00 AM",
+        "endTime": "12:00 PM",
+        "color": "green"
+      },
+      {
+        "id": "3",
+        "subjectCode": "CS 311",
+        "subject": "Database Systems",
+        "section": "BSCS 3-A",
+        "room": "Lab 2",
+        "days": ["Monday", "Wednesday", "Friday"],
+        "startTime": "4:00 PM",
+        "endTime": "5:30 PM",
+        "color": "amber"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "personal": {
+      "firstName": "Jose",
+      "lastName": "De la Cruz",
+      "email": "jdcruz@tup.edu.ph",
+      "phone": "+63 917 222 3344",
+      "employeeId": "TUP-2015-0011",
+      "designation": "Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2015-03-15",
+      "status": "Active"
+    },
+    "education": [
+      {
+        "id": "1",
+        "degree": "PhD Computer Science",
+        "school": "DLSU",
+        "year": "2014"
+      }
+    ],
+    "credentials": [
+      {
+        "id": "1",
+        "name": "PRC License — ECE",
+        "issued": "2010",
+        "expiry": "2030",
+        "status": "Valid"
+      }
+    ],
+    "research": [
+      {
+        "id": "1",
+        "title": "Cybersecurity in Philippine HEIs",
+        "journal": "CHED Research Compendium",
+        "year": "2022",
+        "type": "Publication"
+      }
+    ],
+    "schedule": [
+      {
+        "id": "1",
+        "subjectCode": "CS 312",
+        "subject": "Operating Systems",
+        "section": "BSCS 3-B",
+        "room": "Room 4",
+        "days": ["Tuesday", "Thursday"],
+        "startTime": "10:00 AM",
+        "endTime": "12:00 PM",
+        "color": "purple"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "personal": {
+      "firstName": "Maria",
+      "lastName": "Santos",
+      "email": "msantos@tup.edu.ph",
+      "phone": "",
+      "employeeId": "TUP-2020-0067",
+      "designation": "Instructor III",
+      "employmentType": "Part-time",
+      "dateHired": "2020-08-01",
+      "status": "Active"
+    },
+    "education": [
+      {
+        "id": "1",
+        "degree": "MS Information Technology",
+        "school": "TUP",
+        "year": "2019"
+      }
+    ],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "4",
+    "personal": {
+      "firstName": "Ramon",
+      "lastName": "Reyes",
+      "email": "rreyes@tup.edu.ph",
+      "phone": "",
+      "employeeId": "TUP-2019-0055",
+      "designation": "Assistant Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2019-01-10",
+      "status": "Active"
+    },
+    "education": [],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "5",
+    "personal": {
+      "firstName": "Ana",
+      "lastName": "Luna",
+      "email": "aluna@tup.edu.ph",
+      "phone": "",
+      "employeeId": "TUP-2021-0089",
+      "designation": "Instructor I",
+      "employmentType": "Part-time",
+      "dateHired": "2021-06-01",
+      "status": "Active"
+    },
+    "education": [],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "6",
+    "personal": {
+      "firstName": "Ben",
+      "lastName": "Campos",
+      "email": "bcampos@tup.edu.ph",
+      "phone": "",
+      "employeeId": "TUP-2017-0031",
+      "designation": "Associate Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2017-09-01",
+      "status": "Active"
+    },
+    "education": [],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  }
+]
