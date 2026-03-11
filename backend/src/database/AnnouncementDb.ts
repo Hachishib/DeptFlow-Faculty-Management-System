@@ -2,7 +2,7 @@
 export interface AnnouncementInput {
   content: string;
   file_attachment_url?: string;
-  created_by: string; // faculty_id of the creator
+  created_by: string; 
 }
 
 export interface ReactionInput {
@@ -10,20 +10,19 @@ export interface ReactionInput {
   faculty_id: string;
 }
 
-// 1. Create a new announcement
+
 export const createAnnouncementToDb = async (data: AnnouncementInput) => {
   console.log("📢 [Mock DB] Creating new announcement:");
   console.table(data);
   await new Promise((resolve) => setTimeout(resolve, 300));
 
   return {
-    id: Math.floor(Math.random() * 1000), // Mocked int8 ID
+    id: Math.floor(Math.random() * 1000), 
     ...data,
     created_at: new Date().toISOString()
   };
 };
 
-// 2. Fetch recent announcements
 export const getAnnouncementsFromDb = async () => {
   console.log("📤 [Mock DB] Fetching announcements...");
   await new Promise((resolve) => setTimeout(resolve, 300));
@@ -34,7 +33,7 @@ export const getAnnouncementsFromDb = async () => {
   ];
 };
 
-// 3. Record an acknowledgment (Reaction)
+
 export const acknowledgeAnnouncementInDb = async (data: ReactionInput) => {
   console.log(`✅ [Mock DB] Faculty ${data.faculty_id} acknowledged Announcement ${data.announcement_id}`);
   await new Promise((resolve) => setTimeout(resolve, 300));
@@ -46,7 +45,7 @@ export const acknowledgeAnnouncementInDb = async (data: ReactionInput) => {
   };
 };
 
-// 4. Fetch who acknowledged a specific announcement
+
 export const getReactionsFromDb = async (announcement_id: number) => {
   console.log(`👀 [Mock DB] Fetching reactions for Announcement ID: ${announcement_id}`);
   await new Promise((resolve) => setTimeout(resolve, 300));

@@ -27,10 +27,7 @@ export const createSchedule = async (req: Request, res: Response) => {
 // GET: Fetch schedules (Supports query params like ?faculty_id=123)
 export const fetchSchedules = async (req: Request, res: Response) => {
   try {
-    // Extract filters from the URL query
     const { faculty_id, room_id, day_of_week } = req.query;
-    
-    // Pass the filters directly to the DB function
     const schedules = await getSchedules({ faculty_id, room_id, day_of_week });
     
     return res.status(200).json({ data: schedules });

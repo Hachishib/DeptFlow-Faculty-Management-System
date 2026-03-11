@@ -9,8 +9,6 @@ const router = Router();
 
 router.get("/", fetchRooms);
 router.post("/", createRoom);
-
-// Notice the nested path here to specifically target the status
 router.patch("/:id/status", updateRoomStatus);
 
 export default router;

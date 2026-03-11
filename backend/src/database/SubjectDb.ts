@@ -1,4 +1,4 @@
-// Blueprint based on your Supabase ERD for 'subjects'
+
 export interface SubjectInput {
   subject_code: string;
   subject_name: string;

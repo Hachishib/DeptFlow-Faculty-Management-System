@@ -20,7 +20,6 @@ export const createSubject = async (req: Request, res: Response) => {
   try {
     const { subject_code, subject_name, scope } = req.body;
 
-    // Validate required fields based on the ERD (diamonds are solid/required)
     if (!subject_code || !subject_name) {
       return res.status(400).json({ 
         message: "Subject Code and Subject Name are required" 

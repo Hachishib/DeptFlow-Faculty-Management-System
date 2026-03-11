@@ -6,7 +6,7 @@ import {
   getReactionsFromDb 
 } from "../database/AnnouncementDb";
 
-// POST: Create a new announcement
+//  Create a new announcement
 export const createAnnouncement = async (req: Request, res: Response) => {
   try {
     const { content, file_attachment_url, created_by } = req.body;

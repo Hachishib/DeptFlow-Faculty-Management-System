@@ -23,7 +23,7 @@ export const createFacultyProfile = async (profileData: FacultyProfileInput) => 
       message: "Profile successfully mocked in console",
       data: {
         ...profileData,
-        created_at: new Date().toISOString() /
+        created_at: new Date().toISOString() 
       }
     };
   } catch (error) {
