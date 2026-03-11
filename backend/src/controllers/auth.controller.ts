@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { supabaseAdmin } from "../utils/supabaseAdmin"; 
+import { syncGoogleUserToDb } from "../database/AuthDb";
 
 export const googleLogin = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -9,32 +9,13 @@ export const googleLogin = async (req: Request, res: Response): Promise<any> => 
       return res.status(400).json({ message: "Invalid user data" });
     }
 
-    // 1. Sync Data to Supabase (Bypassing RLS with Admin Key)
-    const { error: syncError } = await supabaseAdmin
-      .from('faculty_profiles')
-      .upsert({
-        id: googleId,
-        full_name: fullName,
-        photo_url: profilePhoto
-      }, { onConflict: 'id' });
+    const profile = await syncGoogleUserToDb({
+      googleId,
+      email,
+      fullName,
+      profilePhoto
+    });
 
-    if (syncError) {
-      console.error("Sync Error:", syncError.message);
-      return res.status(500).json({ message: "Failed to sync user data to database" });
-    }
-
-    // 2. Get the user's role from Supabase
-    const { data: profile, error: roleError } = await supabaseAdmin
-      .from('faculty_profiles')
-      .select('role')
-      .eq('id', googleId)
-      .single();
-
-    if (roleError && roleError.code !== 'PGRST116') {
-      console.error("Role Error:", roleError.message);
-    }
-
-    // 3. Send the final response back to the React frontend
     return res.status(200).json({
       success: true,
       message: "Login successful",
@@ -42,8 +23,8 @@ export const googleLogin = async (req: Request, res: Response): Promise<any> => 
       user: { googleId, email, fullName, profilePhoto },
     });
     
-  } catch (error) {
-    console.error("Server Error:", error);
-    return res.status(500).json({ message: "Google login failed" });
+  } catch (error: any) {
+    console.error("FULL CONTROLLER ERROR:", error); 
+    return res.status(500).json({ message: "Login failed", error: error.message });
   }
 };

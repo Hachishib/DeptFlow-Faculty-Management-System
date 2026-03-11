@@ -1,42 +1,66 @@
+import { supabaseAdmin }  from "../utils/supabaseAdmin";
 
 export interface RoomInput {
+  id? : number;
   room_no: string;
   is_occupied?: boolean;
   room_schedule?: string;
 }
 
-// Fetch all rooms
+// 1. Fetch all rooms
 export const getAllRoomsFromDb = async () => {
-  console.log("📤 [Mock DB] Fetching all rooms...");
-  await new Promise((resolve) => setTimeout(resolve, 300));
-
-  return [
-    { id: 1, room_no: "RM-101", is_occupied: true, room_schedule: "Math 101 (8:00-9:30)" },
-    { id: 2, room_no: "LAB-204", is_occupied: false, room_schedule: "Available" }
-  ];
+  try {
+     const { data, error } = await supabaseAdmin
+       .from('rooms') 
+       .select('*')
+       .order('room_no', { ascending: true }); 
+      
+     if (error) throw error;  
+ 
+     return data;
+   } catch (error: any) {
+     console.error("Supabase Fetch Rooms Error:", error.message);
+     throw new Error(`Failed to fetch rooms: ${error.message}`);
+   }
 };
 
-// Add a new room
-export const addRoomToDb = async (roomData: RoomInput) => {
-  console.log("📥 [Mock DB] Adding new room to system:");
-  console.table(roomData);
-  await new Promise((resolve) => setTimeout(resolve, 300));
-
-  return {
-    id: Math.floor(Math.random() * 100), 
-    ...roomData,
-    is_occupied: roomData.is_occupied || false 
-  };
-};
-
-//Update room occupancy status
+// 2. Update room occupancy status
 export const updateRoomStatusInDb = async (id: number, is_occupied: boolean) => {
-  console.log(`🔄 [Mock DB] Updating Room ${id} occupancy status to: ${is_occupied}`);
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('rooms') 
+      .update({ is_occupied }) 
+      .eq('id', id)
+      .select()
+      .single();
 
-  return {
-    id,
-    is_occupied,
-    message: `Room ${id} is now ${is_occupied ? "Occupied" : "Available"}`
-  };
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      is_occupied: data.is_occupied,
+      message: `Room ${data.room_no || id} is now ${data.is_occupied ? "Occupied" : "Available"}`
+    };
+  } catch (error: any) {
+    console.error("Supabase Update Room Status Error:", error.message);
+    throw new Error(`Failed to update room status: ${error.message}`);
+  }
+};
+
+
+export const addRoomToDb = async (roomData: RoomInput) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('rooms')
+      .insert([roomData]) // Supabase handles the ID automatically
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return data;
+  } catch (error: any) {
+    console.error("Supabase Add Room Error:", error.message);
+    throw new Error(`Failed to add room: ${error.message}`);
+  }
 };

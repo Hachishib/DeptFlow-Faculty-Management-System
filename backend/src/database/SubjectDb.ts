@@ -1,3 +1,4 @@
+import { supabaseAdmin } from "../utils/supabaseAdmin";
 
 export interface SubjectInput {
   subject_code: string;
@@ -7,23 +8,35 @@ export interface SubjectInput {
 
 // 1. Fetch all available subjects
 export const getAllSubjectsFromDb = async () => {
-  console.log("📤 [Mock DB] Fetching all subjects...");
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('subjects') 
+      .select('*')
+      .order('subject_code', { ascending: true }); 
 
-  return [
-    { id: 101, subject_code: "CS101", subject_name: "Introduction to Programming", scope: "Department" },
-    { id: 102, subject_code: "MATH201", subject_name: "Calculus I", scope: "University" }
-  ];
+    if (error) throw error;
+
+    return data;
+  } catch (error: any) {
+    console.error("Supabase Fetch Subjects Error:", error.message);
+    throw new Error(`Failed to fetch subjects: ${error.message}`);
+  }
 };
 
 // 2. Add a new subject
 export const addSubjectToDb = async (subjectData: SubjectInput) => {
-  console.log("📥 [Mock DB] Creating new subject:");
-  console.table(subjectData);
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('subjects') 
+      .insert([subjectData])
+      .select()
+      .single();
 
-  return {
-    id: Math.floor(Math.random() * 1000), // Mocked int8 ID
-    ...subjectData
-  };
+    if (error) throw error;
+
+    return data;
+  } catch (error: any) {
+    console.error("Supabase Create Subject Error:", error.message);
+    throw new Error(`Failed to create subject: ${error.message}`);
+  }
 };

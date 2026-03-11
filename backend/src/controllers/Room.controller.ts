@@ -39,7 +39,6 @@ export const updateRoomStatus = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id as string, 10);
     const { is_occupied } = req.body;
 
-    // Validate ID format and ensure is_occupied was provided
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid Room ID" });
     }

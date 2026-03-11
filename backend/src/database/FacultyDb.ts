@@ -1,3 +1,6 @@
+import { supabaseAdmin }  from "../utils/supabaseAdmin";
+
+
 export interface FacultyProfileInput {
   id: string; 
   full_name?: string;
@@ -13,35 +16,33 @@ export interface FacultyProfileInput {
 // Create a new faculty profile 
 export const createFacultyProfile = async (profileData: FacultyProfileInput) => {
   try {
-    console.log("📥 [Mock DB] Creating new faculty profile:");
-    console.table(profileData);
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    const { data , error } = await supabaseAdmin
+      .from('faculty_profiles')
+      .insert([profileData])
+      .select()
+      .single()
+    
+    if ( error ) throw error;
 
-
-    return {
-      status: "success",
-      message: "Profile successfully mocked in console",
-      data: {
-        ...profileData,
-        created_at: new Date().toISOString() 
-      }
-    };
-  } catch (error) {
-    console.error("Mock DB Create Error:", error);
-    throw new Error("Failed to mock create faculty");
+    return data ;
+  
+  
+  } catch (error: any) {
+    console.error("Mock DB Create Error:", error.message);
+    throw new Error(`Failed to create faculty: ${error.message}`);
   }
 };
 
 // Get all faculty profiles (
 export const getAllFaculty = async () => {
   try {
-    console.log("📤 [Mock DB] Fetching all faculty profiles...");
+    const { data , error } = await supabaseAdmin
+      .from('faculty_profiles')
+      .select('*')
+     
+    if (error) throw error;  
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return [
-      { id: "user-123", full_name: "Ada Lovelace", role: "teacher", is_present: true },
-      { id: "user-456", full_name: "Alan Turing", role: "admin", is_present: false }
-    ];
+    return data;
   } catch (error) {
     console.error("Mock DB Fetch Error:", error);
     throw new Error("Failed to mock fetch faculty");
@@ -51,22 +52,18 @@ export const getAllFaculty = async () => {
 //  Update a specific faculty profile 
 export const updateFacultyProfile = async (id: string, updates: Partial<FacultyProfileInput>) => {
   try {
-    console.log(`🔄 [Mock DB] Updating faculty profile (ID: ${id}) with data:`);
-    console.table(updates);
+    const { data , error } = await supabaseAdmin
+      .from('faculty_profiles')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+     
+    if (error) throw error;  
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    return {
-      status: "success",
-      message: `Profile ${id} successfully updated in console`,
-      data: {
-        id,
-        ...updates,
-        updated_at: new Date().toISOString()
-      }
-    };
+    return data;
   } catch (error) {
-    console.error("Mock DB Update Error:", error);
-    throw new Error("Failed to mock update faculty");
+    console.error("Mock DB Fetch Error:", error);
+    throw new Error("Failed to mock fetch faculty");
   }
 };
