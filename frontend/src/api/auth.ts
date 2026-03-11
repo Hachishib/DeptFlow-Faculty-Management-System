@@ -4,11 +4,25 @@ export async function handleGoogleAuth(userProfile: {
   fullName: string;
   profilePhoto: string;
 }) {
-  const response = await fetch("https://deptflow-faculty-management-system.onrender.com/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userProfile),
-  });
+  try {
+    // 1. Pull the URL from your .env file
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    
+    // 2. Send the data to Render (or localhost if you change the .env later)
+    const response = await fetch(`${backendUrl}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userProfile),
+    });
 
-  return response.json();
+    if (!response.ok) {
+      throw new Error("Backend response was not ok");
+    }
+
+    const data = await response.json();
+    return data; 
+  } catch (error) {
+    console.error("Login API Error:", error);
+    return { success: false, message: "Error connecting to backend", role: "faculty" };
+  }
 }

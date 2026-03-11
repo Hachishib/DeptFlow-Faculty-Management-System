@@ -43,7 +43,13 @@ export default function LoginPage() {
         const success = await handleGoogleAuth({googleId, email, profilePhoto, fullName});
         console.log("Message from backend: ", success.message);
 
-        navigate("/admin/dashboard");
+
+        if (success.role === 'admin') {
+          navigate("/admin/dashboard");
+        } else {
+            navigate("/prof/personal-info"); // Redirects non-admins to the prof page
+        }
+      
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
