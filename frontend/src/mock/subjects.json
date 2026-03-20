@@ -1,0 +1,9 @@
+[
+  { "id": "1", "code": "CS101", "name": "Introduction to Computing",    "units": 3 },
+  { "id": "2", "code": "CS201", "name": "Data Structures & Algorithms", "units": 3 },
+  { "id": "3", "code": "CS301", "name": "Software Engineering",         "units": 3 },
+  { "id": "4", "code": "IT201", "name": "Web Development",              "units": 3 },
+  { "id": "5", "code": "IT301", "name": "Database Management",          "units": 3 },
+  { "id": "6", "code": "CS401", "name": "Operating Systems",            "units": 3 },
+  { "id": "7", "code": "IT401", "name": "Network Administration",       "units": 3 }
+]

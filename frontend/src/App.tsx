@@ -7,6 +7,7 @@ import Error404 from "./pages/Error404";
 import MyProfile from "./pages/MyProfile";
 import AnnouncementsPage from "./pages/admin/AdminAnnouncement";
 import ManageFacultyPage from "./pages/admin/ManageFaculty";
+import AdminManageSchedule from "./pages/admin/AdminManageSchedule";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="profile" element={<MyProfile />} />
           <Route path="announcements" element={<AnnouncementsPage />} />
           <Route path="manage-faculty" element={<ManageFacultyPage />} />
+          <Route path="manage-schedule" element={<AdminManageSchedule />} />
         </Route>
 
         <Route path="*" element={<Error404 />} />
