@@ -25,4 +25,13 @@ export type SeminarAttended = {
   photoUrl?: string;
 };
 
-export type Credential = Certification | License | SeminarAttended;
+export type Experience = {
+  id: string;
+  type: "experience";
+  jobTitle: string;
+  company: string;
+  startYear: string;
+  endYear: string;
+};
+
+export type Credential = Certification | License | SeminarAttended | Experience;

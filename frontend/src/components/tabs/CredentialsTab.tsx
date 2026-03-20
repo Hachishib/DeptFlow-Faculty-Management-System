@@ -38,6 +38,10 @@ export default function CredentialsTab({
     .filter((c) => c.type === "seminar")
     .sort((a, b) => parseInt(b.yearObtained) - parseInt(a.yearObtained));
 
+  const experiences = credentials
+    .filter((c) => c.type === "experience")
+    .sort((a, b) => parseInt(b.startYear) - parseInt(a.startYear));
+
   const CredentialEntry = ({
     cred,
     showMeta1,
@@ -58,12 +62,14 @@ export default function CredentialsTab({
             ? cred.name
             : cred.type === "license"
               ? cred.licenseType
-              : cred.title}
+              : cred.type === "seminar"
+                ? cred.title
+                : cred.jobTitle}
         </p>
         <p className="text-xs text-gray-500 mt-0.5">{showMeta1}</p>
         <p className="text-xs text-gray-400 font-medium">{showMeta2}</p>
 
-        {cred.photoUrl && (
+        {cred.type !== "experience" && cred.photoUrl && (
           <div className="mt-3">
             <img
               src={cred.photoUrl}
@@ -144,6 +150,27 @@ export default function CredentialsTab({
         ) : (
           <p className="text-xs text-gray-400 p-4">
             No seminars attended added yet
+          </p>
+        )}
+      </div>
+
+      {/* Experiences Section */}
+      <div>
+        <SectionHeader title="Work Experiences" />
+        {experiences.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {experiences.map((cred) => (
+              <CredentialEntry
+                key={cred.id}
+                cred={cred}
+                showMeta1={cred.company}
+                showMeta2={`${cred.startYear} - ${cred.endYear}`}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-gray-400 p-4">
+            No work experiences added yet
           </p>
         )}
       </div>

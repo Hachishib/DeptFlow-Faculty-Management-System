@@ -17,7 +17,7 @@ export default function PersonalTab({
     <div className="space-y-6">
       <SectionHeader title="Basic Information" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Field
           label="First Name"
           value={personal.firstName}
@@ -30,6 +30,28 @@ export default function PersonalTab({
           value={personal.lastName}
           editing={editing}
           onChange={(v) => setPersonal({ ...personal, lastName: v })}
+        />
+
+        <Field
+          label="Middle Name"
+          value={personal.middleName}
+          editing={editing}
+          onChange={(v) => setPersonal({ ...personal, middleName: v })}
+        />
+
+        <Field
+          label="Age"
+          value={personal.age}
+          editing={editing}
+          onChange={(v) => setPersonal({ ...personal, age: v })}
+        />
+
+        <Field
+          label="Birth Date"
+          value={personal.dateOfBirth}
+          editing={editing}
+          onChange={(v) => setPersonal({ ...personal, dateOfBirth: v })}
+          type="date"
         />
 
         <Field
@@ -79,6 +101,24 @@ export default function PersonalTab({
           editing={editing}
           onChange={(v) => setPersonal({ ...personal, dateHired: v })}
           type="date"
+        />
+      </div>
+
+      <SectionHeader title="Address Details" />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <Field
+          label="City"
+          value={personal.city}
+          editing={editing}
+          onChange={(v) => setPersonal({ ...personal, city: v })}
+        />
+
+        <Field
+          label="Province"
+          value={personal.province}
+          editing={editing}
+          onChange={(v) => setPersonal({ ...personal, province: v })}
         />
       </div>
     </div>

@@ -8,7 +8,7 @@ type Props = {
   onAdd: (item: Credential) => void;
 };
 
-type CredentialType = "certification" | "license" | "seminar";
+type CredentialType = "certification" | "license" | "seminar" | "experience";
 
 export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
   const [type, setType] = useState<CredentialType>("certification");
@@ -20,6 +20,10 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
     title: "",
     organizer: "",
     yearObtained: "",
+    jobTitle: "",
+    company: "",
+    startYear: "",
+    endYear: "",
   });
   const [photoUrl, setPhotoUrl] = useState<string | undefined>();
 
@@ -78,6 +82,21 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
         yearObtained: form.yearObtained || new Date().getFullYear().toString(),
         photoUrl,
       };
+    } else if (
+      type === "experience" &&
+      form.jobTitle.trim() &&
+      form.company.trim() &&
+      form.startYear.trim() &&
+      form.endYear.trim()
+    ) {
+      credential = {
+        id: String(Date.now()),
+        type: "experience",
+        jobTitle: form.jobTitle,
+        company: form.company,
+        startYear: form.startYear,
+        endYear: form.endYear,
+      };
     }
 
     if (credential) {
@@ -90,6 +109,10 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
         title: "",
         organizer: "",
         yearObtained: "",
+        jobTitle: "",
+        company: "",
+        startYear: "",
+        endYear: "",
       });
       setPhotoUrl(undefined);
       onClose();
@@ -104,6 +127,8 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
         return "Add License";
       case "seminar":
         return "Add Seminar Attended";
+      case "experience":
+        return "Add Experience";
     }
   };
 
@@ -132,8 +157,10 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
             <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
               Credential Type
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              {(["certification", "license", "seminar"] as const).map((t) => (
+            <div className="grid grid-cols-4 gap-2">
+              {(
+                ["certification", "license", "seminar", "experience"] as const
+              ).map((t) => (
                 <button
                   key={t}
                   onClick={() => setType(t)}
@@ -147,7 +174,9 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
                     ? "Certification"
                     : t === "license"
                       ? "License"
-                      : "Seminar"}
+                      : t === "seminar"
+                        ? "Seminar"
+                        : "Experience"}
                 </button>
               ))}
             </div>
@@ -243,49 +272,115 @@ export default function AddCredentialModal({ open, onClose, onAdd }: Props) {
             </>
           )}
 
+          {/* Experience Fields */}
+          {type === "experience" && (
+            <>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  value={form.jobTitle}
+                  placeholder="e.g. Senior Software Engineer"
+                  onChange={(e) => f("jobTitle")(e.target.value)}
+                  className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                  Company
+                </label>
+                <input
+                  type="text"
+                  value={form.company}
+                  placeholder="e.g. Acme Corporation"
+                  onChange={(e) => f("company")(e.target.value)}
+                  className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                    Start Year
+                  </label>
+                  <input
+                    type="number"
+                    value={form.startYear}
+                    placeholder="2020"
+                    onChange={(e) => f("startYear")(e.target.value)}
+                    className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                    End Year
+                  </label>
+                  <input
+                    type="number"
+                    value={form.endYear}
+                    placeholder="Present"
+                    onChange={(e) => f("endYear")(e.target.value)}
+                    className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Year Obtained (Common) */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
-              Year Obtained / Attended
-            </label>
-            <input
-              type="number"
-              value={form.yearObtained}
-              placeholder={new Date().getFullYear().toString()}
-              onChange={(e) => f("yearObtained")(e.target.value)}
-              className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
-              min="1900"
-              max={new Date().getFullYear()}
-            />
-          </div>
+          {type !== "experience" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                Year Obtained / Attended
+              </label>
+              <input
+                type="number"
+                value={form.yearObtained}
+                placeholder={new Date().getFullYear().toString()}
+                onChange={(e) => f("yearObtained")(e.target.value)}
+                className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+                min="1900"
+                max={new Date().getFullYear()}
+              />
+            </div>
+          )}
 
           {/* Photo/Certificate Upload */}
-          <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl py-6 cursor-pointer hover:border-[#880000]/30 hover:bg-[#FEF2F2]/40 transition-all gap-2">
-            <Upload size={20} className="text-gray-300" />
-            <span className="text-xs text-gray-400">
-              Click to upload certificate/photo{" "}
-              <span className="text-gray-300">(optional)</span>
-            </span>
-            <input
-              type="file"
-              className="hidden"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={handleFileChange}
-            />
-          </label>
+          {type !== "experience" && (
+            <>
+              <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl py-6 cursor-pointer hover:border-[#880000]/30 hover:bg-[#FEF2F2]/40 transition-all gap-2">
+                <Upload size={20} className="text-gray-300" />
+                <span className="text-xs text-gray-400">
+                  Click to upload certificate/photo{" "}
+                  <span className="text-gray-300">(optional)</span>
+                </span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileChange}
+                />
+              </label>
 
-          {/* Photo Preview */}
-          {photoUrl && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <div className="w-10 h-10 rounded bg-green-100 flex items-center justify-center">
-                <Check size={16} className="text-green-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-green-700">
-                  File uploaded
-                </p>
-              </div>
-            </div>
+              {/* Photo Preview */}
+              {photoUrl && (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="w-10 h-10 rounded bg-green-100 flex items-center justify-center">
+                    <Check size={16} className="text-green-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-green-700">
+                      File uploaded
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Submit */}

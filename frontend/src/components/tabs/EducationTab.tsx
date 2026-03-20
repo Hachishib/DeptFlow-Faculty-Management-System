@@ -43,6 +43,12 @@ export default function EducationTab({
               <p className="text-sm font-semibold text-gray-800">
                 {item.degree}
               </p>
+              <p className="text-xs text-gray-600">{item.degreeLevel}</p>
+              <p className="text-xs text-gray-500">
+                {item.disciplineCategory === "Other"
+                  ? item.otherDiscipline
+                  : item.disciplineCategory}
+              </p>
               <p className="text-xs text-gray-400">{item.school}</p>
               <p className="text-[10px] text-[#880000] font-semibold mt-1">
                 Graduated {item.year}

@@ -9,16 +9,37 @@ type Props = {
 };
 
 export default function AddEducationModal({ open, onClose, onAdd }: Props) {
-  const [form, setForm] = useState({ degree: "", school: "", year: "" });
+  const [form, setForm] = useState({
+    degree: "",
+    school: "",
+    year: "",
+    degreeLevel: "",
+    disciplineCategory: "",
+    otherDiscipline: "",
+  });
   const f = (key: string) => (v: string) =>
     setForm((p) => ({ ...p, [key]: v }));
 
   if (!open) return null;
 
   const handleAdd = () => {
-    if (!form.degree.trim()) return;
+    if (
+      !form.degree.trim() ||
+      !form.degreeLevel.trim() ||
+      !form.disciplineCategory.trim()
+    )
+      return;
+    if (form.disciplineCategory === "Other" && !form.otherDiscipline.trim())
+      return;
     onAdd({ ...form, id: String(Date.now()) } as Education);
-    setForm({ degree: "", school: "", year: "" });
+    setForm({
+      degree: "",
+      school: "",
+      year: "",
+      degreeLevel: "",
+      disciplineCategory: "",
+      otherDiscipline: "",
+    });
     onClose();
   };
 
@@ -83,6 +104,61 @@ export default function AddEducationModal({ open, onClose, onAdd }: Props) {
               className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
             />
           </div>
+
+          {/* Degree Level */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+              Degree Level
+            </label>
+            <select
+              value={form.degreeLevel}
+              onChange={(e) => f("degreeLevel")(e.target.value)}
+              className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+            >
+              <option value="">Select Degree Level</option>
+              <option value="Associate">Associate</option>
+              <option value="Bachelor">Bachelor</option>
+              <option value="Master">Master</option>
+              <option value="Doctorate">Doctorate</option>
+              <option value="Vocational">Vocational</option>
+            </select>
+          </div>
+
+          {/* Discipline Category */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+              Discipline Category
+            </label>
+            <select
+              value={form.disciplineCategory}
+              onChange={(e) => f("disciplineCategory")(e.target.value)}
+              className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+            >
+              <option value="">Select Discipline</option>
+              <option value="Information Technology">
+                Information Technology
+              </option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Systems">Information Systems</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          {/* Other Discipline (Conditional) */}
+          {form.disciplineCategory === "Other" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                Specify Other Discipline
+              </label>
+              <input
+                type="text"
+                value={form.otherDiscipline}
+                placeholder="e.g. Engineering, Business Administration"
+                onChange={(e) => f("otherDiscipline")(e.target.value)}
+                className="text-sm text-gray-800 border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#880000]/20 focus:border-[#880000]/50 transition-all"
+              />
+            </div>
+          )}
 
           {/* Submit */}
           <button
