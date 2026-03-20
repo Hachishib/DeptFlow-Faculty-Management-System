@@ -32,6 +32,7 @@ const DEFAULT_FILTERS: AnnouncementFilters = {
 type Props = {
   announcements?: Announcement[];
   currentUser?: string;
+  isAdmin?: boolean;
   isLoading?: boolean;
   onPost?: (dto: CreateAnnouncementDTO) => Promise<void> | void;
   onEdit?: (id: string, dto: UpdateAnnouncementDTO) => Promise<void> | void;
@@ -42,6 +43,7 @@ type Props = {
 export default function AnnouncementsPage({
   announcements: propData,
   currentUser = "Dan Bringas",
+  isAdmin = true,
   isLoading = false,
   onPost,
   onEdit,
@@ -135,12 +137,14 @@ export default function AnnouncementsPage({
             Post and manage department-wide announcements
           </p>
         </div>
-        <button
-          onClick={() => setShowPost(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#880000] text-white text-sm font-semibold hover:bg-[#6B0000] transition-colors cursor-pointer self-start sm:self-auto shrink-0"
-        >
-          <Plus size={15} /> Post Announcement
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setShowPost(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#880000] text-white text-sm font-semibold hover:bg-[#6B0000] transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+          >
+            <Plus size={15} /> Post Announcement
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -195,6 +199,7 @@ export default function AnnouncementsPage({
             <AnnouncementRow
               key={item.id}
               item={item}
+              isAdmin={isAdmin}
               onView={() => setViewing(item)}
               onEdit={() => setEditing(item)}
               onDelete={() => handleDelete(item.id)}

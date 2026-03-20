@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Megaphone, Pin, X, ChevronDown } from "lucide-react";
+import { Megaphone, Pin, X, ChevronDown, Upload, Check } from "lucide-react";
 import type {
   Announcement,
   CreateAnnouncementDTO,
@@ -31,8 +31,23 @@ export default function AnnouncementFormModal({
   );
   const [tag, setTag] = useState<AnnouncementTag>(initial?.tag ?? "General");
   const [pinned, setPinned] = useState(initial?.pinned ?? false);
+  const [attachment, setAttachment] = useState<
+    { url: string; fileName: string; fileType: string } | undefined
+  >(initial?.attachment);
 
   const isValid = title.trim().length > 0 && body.trim().length > 0;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setAttachment({
+        url,
+        fileName: file.name,
+        fileType: file.type,
+      });
+    }
+  };
 
   function handleSubmit() {
     if (!isValid) return;
@@ -43,6 +58,7 @@ export default function AnnouncementFormModal({
       tag,
       pinned,
       author: initial?.author ?? "",
+      attachment,
     });
     onClose();
   }
@@ -160,6 +176,35 @@ export default function AnnouncementFormModal({
               ? "Pinned — will appear at the top"
               : "Pin this announcement"}
           </button>
+
+          {/* File attachment */}
+          <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl py-6 cursor-pointer hover:border-[#880000]/30 hover:bg-[#FEF2F2]/40 transition-all gap-2">
+            <Upload size={20} className="text-gray-300" />
+            <span className="text-xs text-gray-400">
+              Click to upload attachment{" "}
+              <span className="text-gray-300">(optional)</span>
+            </span>
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              onChange={handleFileChange}
+            />
+          </label>
+
+          {/* File preview */}
+          {attachment && (
+            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="w-10 h-10 rounded bg-green-100 flex items-center justify-center shrink-0">
+                <Check size={16} className="text-green-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-green-700 truncate">
+                  {attachment.fileName}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

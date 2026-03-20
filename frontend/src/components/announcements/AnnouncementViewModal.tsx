@@ -1,4 +1,4 @@
-import { X, Pin, Users } from "lucide-react";
+import { X, Pin, Users, Paperclip } from "lucide-react";
 import type { Announcement } from "../../types/announcement";
 import {
   TAG_STYLES,
@@ -64,6 +64,27 @@ export default function AnnouncementViewModal({ item, onClose }: Props) {
             {item.body}
           </p>
         </div>
+
+        {/* Attachment */}
+        {item.attachment && (
+          <div className="px-6 pb-4">
+            <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <Paperclip size={16} className="text-blue-600 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-blue-700 truncate">
+                  {item.attachment.fileName}
+                </p>
+              </div>
+              <a
+                href={item.attachment.url}
+                download={item.attachment.fileName}
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium shrink-0"
+              >
+                Download
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="px-6 pb-5">

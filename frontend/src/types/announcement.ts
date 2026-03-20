@@ -13,11 +13,16 @@ export type Announcement = {
   id:       string;
   title:    string;
   body:     string;
-  date:     string; 
+  date:     string;
   author:   string;
   pinned:   boolean;
   audience: AnnouncementAudience;
   tag:      AnnouncementTag;
+  attachment?: {
+    url:      string;
+    fileName: string;
+    fileType: string;
+  };
 };
 
 // What you send to the DB on create (id and date are generated server-side)

@@ -1,5 +1,20 @@
 [
   {
+    "id": "0",
+    "title": "Department Budget Proposal — AY 2026-2027",
+    "body": "Please review the attached budget proposal document for the upcoming fiscal year. Your feedback is required by June 22, 2026. The proposal includes allocations for equipment, professional development, and facility improvements. Please contact the department head with any questions or suggestions.",
+    "date": "2026-06-21",
+    "author": "Dr. Rivera",
+    "pinned": true,
+    "audience": "All Faculty",
+    "tag": "General",
+    "attachment": {
+      "fileName": "Budget-Proposal-AY2026.pdf",
+      "fileType": "application/pdf",
+      "url": ""
+    }
+  },
+  {
     "id": "1",
     "title": "Grade Submission Deadline — June 30",
     "body": "All faculty are required to submit final grades no later than June 30, 2026. Please log in to the official TUP portal and encode all grades under your assigned subjects. Late submissions will be escalated to the department head. Coordinate with the registrar for any encoding issues.",
