@@ -35,17 +35,17 @@
     "credentials": [
       {
         "id": "1",
-        "name": "Civil Service Eligibility",
-        "issued": "2008",
-        "expiry": "N/A",
-        "status": "Valid"
+        "type": "license",
+        "licenseType": "Civil Service Eligibility",
+        "issuingAuthority": "Civil Service Commission",
+        "yearObtained": "2008"
       },
       {
         "id": "2",
-        "name": "PRC License — CS",
-        "issued": "2018",
-        "expiry": "2028",
-        "status": "Valid"
+        "type": "license",
+        "licenseType": "PRC License — Computer Science",
+        "issuingAuthority": "Professional Regulation Commission",
+        "yearObtained": "2018"
       }
     ],
     "research": [
@@ -117,10 +117,10 @@
     "credentials": [
       {
         "id": "1",
-        "name": "PRC License — ECE",
-        "issued": "2010",
-        "expiry": "2030",
-        "status": "Valid"
+        "type": "license",
+        "licenseType": "PRC License — Electronics and Communications Engineering",
+        "issuingAuthority": "Professional Regulation Commission",
+        "yearObtained": "2010"
       }
     ],
     "research": [

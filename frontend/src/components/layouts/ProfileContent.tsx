@@ -17,10 +17,38 @@ const MOCK_EDUCATION: Education[] = [
 const MOCK_CREDENTIALS: Credential[] = [
   {
     id: "1",
-    name: "Professional License",
-    issued: "2018",
-    expiry: "2028",
-    status: "Valid",
+    type: "certification",
+    name: "AWS Certified Solutions Architect",
+    issuingOrganization: "Amazon Web Services",
+    yearObtained: "2023",
+  },
+  {
+    id: "2",
+    type: "certification",
+    name: "Google Cloud Professional Data Engineer",
+    issuingOrganization: "Google Cloud",
+    yearObtained: "2022",
+  },
+  {
+    id: "3",
+    type: "license",
+    licenseType: "Professional Engineer License",
+    issuingAuthority: "PRC - Professional Regulation Commission",
+    yearObtained: "2020",
+  },
+  {
+    id: "4",
+    type: "seminar",
+    title: "Advanced React Patterns Workshop",
+    organizer: "Tech Training Academy",
+    yearObtained: "2023",
+  },
+  {
+    id: "5",
+    type: "seminar",
+    title: "Full-Stack Web Development Bootcamp",
+    organizer: "IT Development Institute",
+    yearObtained: "2021",
   },
 ];
 const MOCK_RESEARCH: Research[] = [
