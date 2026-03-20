@@ -3,9 +3,9 @@ import {
   createFacultyProfile, 
   getAllFaculty, 
   updateFacultyProfile 
-} from "../database/FacultyDb";
+} from "../../database/MyProfile/FacultyDb";
 
-
+// GET: Retrieve all faculty profiles
 export const getFacultyList = async (req: Request, res: Response) => {
   try {
     const faculty = await getAllFaculty();
@@ -19,13 +19,44 @@ export const getFacultyList = async (req: Request, res: Response) => {
 // POST: Create a new profile
 export const createFaculty = async (req: Request, res: Response) => {
   try {
-    const { id, full_name, role, employment_type } = req.body;
+    const { 
+      id, 
+      employee_id,
+      full_name, 
+      email,
+      phone_number,
+      age,
+      birthday,
+      gender,
+      city,
+      province,
+      rank_designation,
+      employment_type,
+      date_hired
+    } = req.body;
+
 
     if (!id || !full_name) {
       return res.status(400).json({ message: "ID and Full Name are required" });
     }
 
-    const newProfile = await createFacultyProfile(req.body);
+    const profileData = {
+      id,
+      employee_id,
+      full_name,
+      email,
+      phone_number,
+      age,
+      birthday,
+      gender,
+      city,
+      province,
+      rank_designation,
+      employment_type,
+      date_hired
+    };
+
+    const newProfile = await createFacultyProfile(profileData);
     
     return res.status(201).json({
       message: "Faculty profile created successfully",
@@ -37,7 +68,7 @@ export const createFaculty = async (req: Request, res: Response) => {
   }
 };
 
-// PATCH: Update specific fields 
+// PATCH: Update specific fields (Status, Personal Info, etc.)
 export const updateFacultyStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; 

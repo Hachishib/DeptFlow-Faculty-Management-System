@@ -1,17 +1,16 @@
 import { Router } from "express";
 import { 
   createAnnouncement, 
-  fetchAnnouncements, 
+  getAnnouncements, 
   acknowledgeAnnouncement, 
-  fetchReactions 
-} from "../../controllers/Announcement.controller";
+  getAnnouncementReactions 
+} from "../../controllers/Announcement/Announcement.controller";
 
 const router = Router();
 
-
 router.post("/", createAnnouncement);
-router.get("/", fetchAnnouncements);
+router.get("/", getAnnouncements);
 router.post("/:id/acknowledge", acknowledgeAnnouncement);
-router.get("/:id/reactions", fetchReactions);
+router.get("/:id/reactions", getAnnouncementReactions);
 
 export default router;
