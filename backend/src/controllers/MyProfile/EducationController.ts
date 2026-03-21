@@ -12,14 +12,14 @@ export const getFacultyEducation = async (req: Request, res: Response) => {
   try {
     const { faculty_id } = req.params;
 
-    if (!faculty_id) {
-      return res.status(400).json({ message: "Faculty ID is required" });
+    // Type Guard: Ensures faculty_id is exactly a string
+    if (typeof faculty_id !== 'string') {
+      return res.status(400).json({ message: "A valid Faculty ID string is required" });
     }
 
-    const educationRecords = await getEducationByFaculty(faculty_id);
+    const educationRecords = await getEducationByFaculty(faculty_id); 
     return res.status(200).json({ data: educationRecords });
   } catch (error: any) {
-    console.error("Fetch Education Error:", error);
     return res.status(500).json({ message: "Failed to retrieve education records" });
   }
 };
@@ -27,7 +27,6 @@ export const getFacultyEducation = async (req: Request, res: Response) => {
 // POST: Add a new education record to a faculty profile
 export const createEducation = async (req: Request, res: Response) => {
   try {
-    // Explicitly destructure the exact fields we want to allow
     const { 
       faculty_id,
       degree_level,
@@ -36,7 +35,6 @@ export const createEducation = async (req: Request, res: Response) => {
       graduation_date
     } = req.body;
 
-    // faculty_id is strictly required to link the record
     if (!faculty_id) {
       return res.status(400).json({ message: "Faculty ID is required to add an education record" });
     }
@@ -64,21 +62,16 @@ export const createEducation = async (req: Request, res: Response) => {
 // PATCH: Update a specific education record
 export const updateEducationDetails = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // The ID of the specific education record, not the faculty ID
+    const { id } = req.params; 
     const updates = req.body; 
 
-    if (!id) {
-      return res.status(400).json({ message: "Education Record ID is required" });
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "A valid Education Record ID is required" });
     }
 
-    const updatedRecord = await updateEducationRecord(id as string, updates);
-
-    return res.status(200).json({
-      message: "Education record updated successfully",
-      data: updatedRecord
-    });
+    const updatedRecord = await updateEducationRecord(id, updates);
+    return res.status(200).json({ data: updatedRecord });
   } catch (error: any) {
-    console.error("Update Education Error:", error);
-    return res.status(500).json({ message: error.message || "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

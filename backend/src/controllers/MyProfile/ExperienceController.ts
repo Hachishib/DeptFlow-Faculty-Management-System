@@ -8,12 +8,13 @@ import {
 export const getFacultyExperience = async (req: Request, res: Response) => {
   try {
     const { faculty_id } = req.params;
-    if (!faculty_id) return res.status(400).json({ message: "Faculty ID is required" });
+    if (typeof faculty_id !== 'string') {
+      return res.status(400).json({ message: "Valid Faculty ID is required" });
+    }
 
     const experiences = await getExperiencesByFaculty(faculty_id);
     return res.status(200).json({ data: experiences });
   } catch (error: any) {
-    console.error("Fetch Experience Error:", error);
     return res.status(500).json({ message: "Failed to retrieve experiences" });
   }
 };
@@ -42,18 +43,13 @@ export const addExperience = async (req: Request, res: Response) => {
 export const updateExperienceDetails = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; 
-    const updates = req.body; 
+    if (typeof id !== 'string') {
+      return res.status(400).json({ message: "Experience ID is required" });
+    }
 
-    if (!id) return res.status(400).json({ message: "Experience ID is required" });
-
-    const updatedExperience = await updateExperience(id as string, updates);
-
-    return res.status(200).json({
-      message: "Experience updated successfully",
-      data: updatedExperience
-    });
+    const updatedExperience = await updateExperience(id, req.body);
+    return res.status(200).json({ data: updatedExperience });
   } catch (error: any) {
-    console.error("Update Experience Error:", error);
-    return res.status(500).json({ message: error.message || "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
