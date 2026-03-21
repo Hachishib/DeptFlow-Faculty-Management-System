@@ -6,25 +6,46 @@ import {
   getReactionsFromDb 
 } from "../database/AnnouncementDb";
 
-//  Create a new announcement
-export const createAnnouncement = async (req: Request, res: Response) => {
+export const createAnnouncement = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { content, file_attachment_url, created_by } = req.body;
+    // 1. Pull the new fields from the request
+    const { 
+      title, content, audience, category, is_pinned, 
+      file_attachment_url, created_by 
+    } = req.body;
 
-    if (!content || !created_by) {
-      return res.status(400).json({ message: "Content and creator ID (created_by) are required" });
+    // 2. Validate all strictly required fields
+    if (!title || !content || !audience || !category || !created_by) {
+      return res.status(400).json({ 
+        message: "Title, content, audience, category, and creator ID are required." 
+      });
     }
 
-    const newAnnouncement = await createAnnouncementToDb({ content, file_attachment_url, created_by });
+    // 3. Create it (defaulting is_pinned to false if not provided)
+    const newAnnouncement = await createAnnouncementToDb({ 
+      title, content, audience, category, 
+      is_pinned: is_pinned || false, 
+      file_attachment_url, created_by 
+    });
+    
     return res.status(201).json({ message: "Announcement posted", data: newAnnouncement });
-  } catch (error) {
-    console.error("Create Announcement Error:", error);
+    
+  } catch (error: any) {
+    console.error("Create Announcement Error:", error.message);
+    
+    // Catching the ENUM constraints
+    if (error.message.includes('valid_audience')) {
+      return res.status(400).json({ message: "Invalid audience. Must be 'Part-Time', 'Full-Time', or 'All'." });
+    }
+    if (error.message.includes('valid_category')) {
+      return res.status(400).json({ message: "Invalid category. Must be 'General', 'Urgent', 'Reminder', or 'Event'." });
+    }
+    
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// GET: Fetch all announcements
-export const fetchAnnouncements = async (req: Request, res: Response) => {
+export const fetchAnnouncements = async (req: Request, res: Response): Promise<any> => {
   try {
     const announcements = await getAnnouncementsFromDb();
     return res.status(200).json({ data: announcements });
@@ -34,11 +55,10 @@ export const fetchAnnouncements = async (req: Request, res: Response) => {
   }
 };
 
-// POST: Acknowledge an announcement (Reaction)
-export const acknowledgeAnnouncement = async (req: Request, res: Response) => {
+export const acknowledgeAnnouncement = async (req: Request, res: Response): Promise<any> => {
   try {
     const announcement_id = parseInt(req.params.id as string, 10);
-    const { faculty_id } = req.body; // In a real app, you might get this from req.user (Auth Token)
+    const { faculty_id } = req.body; 
 
     if (isNaN(announcement_id) || !faculty_id) {
       return res.status(400).json({ message: "Valid Announcement ID and Faculty ID are required" });
@@ -52,8 +72,7 @@ export const acknowledgeAnnouncement = async (req: Request, res: Response) => {
   }
 };
 
-// GET: See who acknowledged a specific announcement
-export const fetchReactions = async (req: Request, res: Response) => {
+export const fetchReactions = async (req: Request, res: Response): Promise<any> => {
   try {
     const announcement_id = parseInt(req.params.id as string, 10);
 

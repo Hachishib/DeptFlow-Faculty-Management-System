@@ -1,10 +1,9 @@
 import { supabaseAdmin }  from "../utils/supabaseAdmin";
 
+// Updated input interface to match our simple DB structure
 export interface RoomInput {
-  id? : number;
   room_no: string;
   is_occupied?: boolean;
-  room_schedule?: string;
 }
 
 // 1. Fetch all rooms
@@ -16,7 +15,6 @@ export const getAllRoomsFromDb = async () => {
        .order('room_no', { ascending: true }); 
       
      if (error) throw error;  
- 
      return data;
    } catch (error: any) {
      console.error("Supabase Fetch Rooms Error:", error.message);
@@ -24,7 +22,28 @@ export const getAllRoomsFromDb = async () => {
    }
 };
 
-// 2. Update room occupancy status
+// 2. Add a room 
+export const addRoomToDb = async (roomData: RoomInput) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('rooms')
+      .insert([{ 
+        room_no: roomData.room_no,
+        // If not specified, default new rooms to 'available' (false)
+        is_occupied: roomData.is_occupied || false 
+      }]) 
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error: any) {
+    console.error("Supabase Add Room Error:", error.message);
+    throw new Error(`Failed to add room: ${error.message}`);
+  }
+};
+
+// 3. Update room occupancy status (The REAL-WORLD OVERRIDE!)
 export const updateRoomStatusInDb = async (id: number, is_occupied: boolean) => {
   try {
     const { data, error } = await supabaseAdmin
@@ -38,29 +57,12 @@ export const updateRoomStatusInDb = async (id: number, is_occupied: boolean) => 
 
     return {
       id: data.id,
+      room_no: data.room_no,
       is_occupied: data.is_occupied,
-      message: `Room ${data.room_no || id} is now ${data.is_occupied ? "Occupied" : "Available"}`
+      message: `Room ${data.room_no} is now ${data.is_occupied ? "Occupied" : "Available"}`
     };
   } catch (error: any) {
     console.error("Supabase Update Room Status Error:", error.message);
     throw new Error(`Failed to update room status: ${error.message}`);
-  }
-};
-
-
-export const addRoomToDb = async (roomData: RoomInput) => {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('rooms')
-      .insert([roomData]) // Supabase handles the ID automatically
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    return data;
-  } catch (error: any) {
-    console.error("Supabase Add Room Error:", error.message);
-    throw new Error(`Failed to add room: ${error.message}`);
   }
 };

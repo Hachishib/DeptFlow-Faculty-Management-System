@@ -6,7 +6,6 @@ export interface SubjectInput {
   scope?: string;
 }
 
-// 1. Fetch all available subjects
 export const getAllSubjectsFromDb = async () => {
   try {
     const { data, error } = await supabaseAdmin
@@ -15,7 +14,6 @@ export const getAllSubjectsFromDb = async () => {
       .order('subject_code', { ascending: true }); 
 
     if (error) throw error;
-
     return data;
   } catch (error: any) {
     console.error("Supabase Fetch Subjects Error:", error.message);
@@ -23,7 +21,6 @@ export const getAllSubjectsFromDb = async () => {
   }
 };
 
-// 2. Add a new subject
 export const addSubjectToDb = async (subjectData: SubjectInput) => {
   try {
     const { data, error } = await supabaseAdmin
@@ -33,10 +30,10 @@ export const addSubjectToDb = async (subjectData: SubjectInput) => {
       .single();
 
     if (error) throw error;
-
     return data;
   } catch (error: any) {
     console.error("Supabase Create Subject Error:", error.message);
-    throw new Error(`Failed to create subject: ${error.message}`);
+    // Pass the exact error so the controller can read the UNIQUE constraint violation
+    throw error; 
   }
 };

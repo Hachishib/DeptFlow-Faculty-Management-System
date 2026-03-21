@@ -7,24 +7,38 @@ export interface GoogleUserInput {
   profilePhoto?: string;
 }
 
-// src/database/AuthDb.ts
-
 export const syncGoogleUserToDb = async (userData: GoogleUserInput) => {
   try {
-    const { data: profile, error } = await supabaseAdmin
+    // STEP 1: Save the Keycard (Login Credentials)
+    const { error: authError } = await supabaseAdmin
       .from('auth_google') 
       .upsert({
-        googleid: userData.googleId,      // Matches your DB column 'googleid'
-        email: userData.email,            // Matches your DB column 'email'
-        fullname: userData.fullName,      // Matches your DB column 'fullname'
-        "profilePhoto?": userData.profilePhoto // Matches your DB column 'profilePhoto?'
-      }, { onConflict: 'googleid' })      // 'googleid' is your Primary Key
-      .select('role') // ⚠️ IMPORTANT: Does a 'role' column exist in this table? 
-                      // If not, remove .select('role') or add the column to Supabase!
+        googleid: userData.googleId,      
+        email: userData.email            
+      }, { onConflict: 'googleid' });
+
+    if (authError) throw authError;
+
+    // STEP 2: Create or Update the Employee File (Faculty Profile)
+    // We use 'upsert' here too! If they update their Google Profile Photo, 
+    // it will automatically update their picture in your system the next time they log in.
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from('faculty_profiles')
+      .upsert({
+        id: userData.googleId,
+        full_name: userData.fullName,
+        photo_url: userData.profilePhoto
+        // Note: We don't send a 'role' here, so it safely defaults 
+        // to whatever your Supabase database is set to do for new users.
+      }, { onConflict: 'id' })
+      .select()
       .single();
 
-    if (error) throw error;
-    return profile;
+    if (profileError) throw profileError;
+
+    // We return the 'profile' because it contains the cool stuff the frontend needs (like role, full name)
+    return profile; 
+
   } catch (error: any) {
     console.error("Supabase Auth Sync Error:", error.message);
     throw new Error(`Failed to sync user data: ${error.message}`);
