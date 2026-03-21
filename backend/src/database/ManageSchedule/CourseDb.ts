@@ -19,7 +19,7 @@ export interface CourseInput {
 let mockCourses: CourseInput[] = [
   {
     id: "mock-course-1",
-    faculty_id: "1", // Example faculty ID to link to our mock faculty profile
+    faculty_id: "1", 
     course_code: "CS101",
     course_name: "Introduction to Computing",
     program: "BSCS",

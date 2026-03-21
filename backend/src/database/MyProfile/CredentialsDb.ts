@@ -1,28 +1,69 @@
-import { supabaseAdmin } from "../../utils/supabaseAdmin";
+// import { supabaseAdmin } from "../../utils/supabaseAdmin";
 
 export interface CredentialInput {
   id?: string;
   faculty_id: string;
-  category: 'Certification' | 'License' | 'Seminar'; // Enforcing the 3 categories
+  category: 'Certification' | 'License' | 'Seminar'; 
   title?: string;
-  
-  // Specific to Certifications
   organization?: string;
-  
-  // Specific to Licenses
   authority?: string;
-  
-  // Specific to Seminars
   organizer?: string;
-  
-  year?: number; // or string if you prefer YYYY format
-  photo_url?: string; // Used for both certificate_photo and license_photo
+  year?: number; 
+  photo_url?: string; 
 }
 
+
+let mockCredentials: CredentialInput[] = [
+  {
+    id: "mock-cred-1",
+    faculty_id: "1",
+    category: "Certification",
+    title: "AWS Certified Developer",
+    organization: "Amazon Web Services",
+    year: 2023
+  },
+  {
+    id: "mock-cred-2",
+    faculty_id: "1", 
+    category: "Seminar",
+    title: "Modern Web Development Trends",
+    organizer: "Tech Conferences PH",
+    year: 2024
+  }
+];
+
+export const createCredential = async (credentialData: CredentialInput) => {
+  console.log("Mock DB: Creating credential...");
+  const newCredential = { ...credentialData, id: `mock-cred-${Date.now()}` };
+  mockCredentials.push(newCredential);
+  
+  return newCredential;
+};
+
+export const getCredentialsByFaculty = async (facultyId: string) => {
+  console.log(`Mock DB: Fetching credentials for faculty ${facultyId}...`);
+  return mockCredentials.filter(cred => cred.faculty_id === facultyId);
+};
+
+export const updateCredential = async (id: string, updates: Partial<CredentialInput>) => {
+  console.log(`Mock DB: Updating credential ${id}...`);
+  
+  const index = mockCredentials.findIndex(cred => cred.id === id);
+  if (index === -1) throw new Error("Credential not found in mock database");
+
+  mockCredentials[index] = { ...mockCredentials[index], ...updates };
+  
+  return mockCredentials[index];
+};
+
+
+//Uncomment the below code and comment out the above mock implementations when ready to connect to the actual database
+// import { supabaseAdmin } from "../../utils/supabaseAdmin";
+/*
 export const createCredential = async (credentialData: CredentialInput) => {
   try {
     const { data, error } = await supabaseAdmin
-      .from('credentials')
+      .from('credentials')  // Waiting for table name
       .insert([credentialData])
       .select()
       .single();
@@ -66,3 +107,4 @@ export const updateCredential = async (id: string, updates: Partial<CredentialIn
     throw new Error(`Failed to update credential: ${error.message}`);
   }
 };
+*/

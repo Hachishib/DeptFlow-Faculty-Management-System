@@ -8,29 +8,29 @@ import { getFacultyResearch, addResearch, updateResearchDetails } from "../../co
 
 const router = Router();
 
-// 1. FACULTY PROFILE ROUTES
+//  FACULTY PROFILE ROUTES
 router.get("/", getFacultyList);
 router.post("/", createFaculty);
 router.patch("/:id", updateFacultyStatus);
 
 
-// 2. EDUCATION ROUTES
+// EDUCATION ROUTES
 router.get("/:faculty_id/education", getFacultyEducation);
 router.post("/education", createEducation);
 router.patch("/education/:id", updateEducationDetails);
 
-// 3. CREDENTIAL ROUTES (Certifications, Licenses, Seminars)
+// CREDENTIAL ROUTES (Certifications, Licenses, Seminars)
 router.get("/:faculty_id/credentials", getFacultyCredentials);
 router.post("/credentials", addCredential);
 router.patch("/credentials/:id", updateCredentialDetails);
 
 
-// 4. EXPERIENCE ROUTES
+// EXPERIENCE ROUTES
 router.get("/:faculty_id/experience", getFacultyExperience);
 router.post("/experience", addExperience);
 router.patch("/experience/:id", updateExperienceDetails);
 
-// 5. RESEARCH ROUTES
+// RESEARCH ROUTES
 router.get("/:faculty_id/research", getFacultyResearch);
 router.post("/research", addResearch);
 router.patch("/research/:id", updateResearchDetails);
