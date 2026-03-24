@@ -1,55 +1,12 @@
-// import { supabaseAdmin } from "../../utils/supabaseAdmin";
+import { supabaseAdmin } from "../../utils/supabaseAdmin";
 
 export interface ResearchInput {
-  id?: string;
-  faculty_id: string; 
-  title?: string;
-  category?: 'Journal' | 'Thesis' | 'Book' | 'Conference' | 'Other'; 
-  journal_conference?: string; 
+  faculty_id: string;
+  title: string;
+  category?: string;
+  journal_conference?: string;
 }
 
-
-
-let mockResearchRecords: ResearchInput[] = [
-  {
-    id: "mock-res-1",
-    faculty_id: "1", 
-    title: "The Impact of AI in Modern Education",
-    category: "Journal",
-    journal_conference: "Journal of Educational Technology"
-  },
-  {
-    id: "mock-res-2",
-    faculty_id: "1",
-    title: "Machine Learning Optimization Techniques",
-    category: "Conference",
-    journal_conference: "IEEE International Conference on Data Mining"
-  }
-];
-
-export const createResearch = async (researchData: ResearchInput) => {
-  console.log("Mock DB: Creating research record...");
-  const newRecord = { ...researchData, id: `mock-res-${Date.now()}` };
-  mockResearchRecords.push(newRecord);
-  return newRecord;
-};
-
-export const getResearchByFaculty = async (facultyId: string) => {
-  console.log(`Mock DB: Fetching research for faculty ${facultyId}...`);
-  return mockResearchRecords.filter(res => res.faculty_id === facultyId);
-};
-
-export const updateResearch = async (id: string, updates: Partial<ResearchInput>) => {
-  console.log(`Mock DB: Updating research record ${id}...`);
-  const index = mockResearchRecords.findIndex(res => res.id === id);
-  if (index === -1) throw new Error("Research record not found in mock database");
-  
-  mockResearchRecords[index] = { ...mockResearchRecords[index], ...updates };
-  return mockResearchRecords[index];
-};
-
-
-/*
 // Create a new research record
 export const createResearch = async (researchData: ResearchInput) => {
   try {
@@ -60,11 +17,11 @@ export const createResearch = async (researchData: ResearchInput) => {
       .single();
     
     if (error) throw error;
-
     return data;
-  } catch (error: any) {
-    console.error("DB Create Error:", error.message);
-    throw new Error(`Failed to create research record: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown database error";
+    console.error("DB Create Error:", errorMessage);
+    throw new Error(`Failed to create research record: ${errorMessage}`);
   }
 };
 
@@ -75,13 +32,13 @@ export const getResearchByFaculty = async (facultyId: string) => {
       .from('research_records')
       .select('*')
       .eq('faculty_id', facultyId);
-     
+      
     if (error) throw error;  
-
     return data;
-  } catch (error: any) {
-    console.error("DB Fetch Error:", error.message);
-    throw new Error(`Failed to fetch research records: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown database error";
+    console.error("DB Fetch Error:", errorMessage);
+    throw new Error(`Failed to fetch research records: ${errorMessage}`);
   }
 };
 
@@ -94,13 +51,29 @@ export const updateResearch = async (id: string, updates: Partial<ResearchInput>
       .eq('id', id)
       .select()
       .single();
-     
+      
     if (error) throw error;  
-
     return data;
-  } catch (error: any) {
-    console.error("DB Update Error:", error.message);
-    throw new Error(`Failed to update research record: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown database error";
+    console.error("DB Update Error:", errorMessage);
+    throw new Error(`Failed to update research record: ${errorMessage}`);
   }
 };
-*/
+
+// Added the Delete function to complete the set!
+export const deleteResearch = async (id: string) => {
+  try {
+    const { error } = await supabaseAdmin
+      .from('research_records')
+      .delete()
+      .eq('id', id);
+      
+    if (error) throw error;  
+    return true; 
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown database error";
+    console.error("DB Delete Error:", errorMessage);
+    throw new Error(`Failed to delete research record: ${errorMessage}`);
+  }
+};
