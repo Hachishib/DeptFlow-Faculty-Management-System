@@ -2,7 +2,11 @@ import { Router } from "express";
 
 import { getFacultyList, createFaculty, updateFacultyStatus } from "../../controllers/MyProfile/Faculty.controller";
 import { getFacultyEducation, createEducation, updateEducationDetails } from "../../controllers/MyProfile/EducationController";
-import { getFacultyCredentials, addCredential, updateCredentialDetails } from "../../controllers/MyProfile/CredentialController";
+import { 
+  fetchFacultyEducation, 
+  editEducation, 
+  removeEducation 
+} from "../../controllers/MyProfile/Credential.controller";
 import { getFacultyExperience, addExperience, updateExperienceDetails } from "../../controllers/MyProfile/ExperienceController";
 import { getFacultyResearch, addResearch, updateResearchDetails } from "../../controllers/MyProfile/ResearchController";
 
@@ -19,11 +23,10 @@ router.get("/:faculty_id/education", getFacultyEducation);
 router.post("/education", createEducation);
 router.patch("/education/:id", updateEducationDetails);
 
-// CREDENTIAL ROUTES (Certifications, Licenses, Seminars)
-router.get("/:faculty_id/credentials", getFacultyCredentials);
-router.post("/credentials", addCredential);
-router.patch("/credentials/:id", updateCredentialDetails);
-
+router.post("/", createEducation);
+router.get("/:faculty_id", fetchFacultyEducation);
+router.put("/:id", editEducation);
+router.delete("/:id", removeEducation);
 
 // EXPERIENCE ROUTES
 router.get("/:faculty_id/experience", getFacultyExperience);
