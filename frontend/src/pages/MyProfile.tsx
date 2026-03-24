@@ -18,6 +18,11 @@ export default function MyProfile() {
   const [personal, setPersonal] = useState<Personal>({
     firstName: "Dan Jheniel",
     lastName: "Bringas",
+    middleName: "Sarmiento",
+    dateOfBirth: "1990-01-01",
+    age: "34",
+    city: "Manila",
+    province: "Metro Manila",
     email: "danbringas@tup.edu.ph",
     phone: "+63 912 345 6789",
     employeeId: "TUP-2018-0042",
