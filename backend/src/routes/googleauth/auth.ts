@@ -3,6 +3,6 @@ import { googleLogin } from "../../controllers/auth.controller";
 
 const router = express.Router();
 
-router.post("/", googleLogin);
+router.post("/login", googleLogin);
 
 export default router;
