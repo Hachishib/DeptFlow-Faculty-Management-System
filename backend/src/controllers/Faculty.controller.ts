@@ -17,9 +17,9 @@ export const getFacultyList = async (req: Request, res: Response): Promise<any> 
 
 export const createFaculty = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { id, full_name } = req.body;
+    const { faculty_id, full_name } = req.body;
 
-    if (!id || !full_name) {
+    if (!faculty_id || !full_name) {
       return res.status(400).json({ message: "ID and Full Name are required" });
     }
 

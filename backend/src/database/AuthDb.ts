@@ -13,9 +13,9 @@ export const syncGoogleUserToDb = async (userData: GoogleUserInput) => {
     const { error: authError } = await supabaseAdmin
       .from('auth_google') 
       .upsert({
-        googleid: userData.googleId,      
+        google_id: userData.googleId,      
         email: userData.email            
-      }, { onConflict: 'googleid' });
+      }, { onConflict: 'google_id' });
 
     if (authError) throw authError;
 
@@ -25,12 +25,12 @@ export const syncGoogleUserToDb = async (userData: GoogleUserInput) => {
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('faculty_profiles')
       .upsert({
-        id: userData.googleId,
+        faculty_id: userData.googleId,
         full_name: userData.fullName,
         photo_url: userData.profilePhoto
         // Note: We don't send a 'role' here, so it safely defaults 
         // to whatever your Supabase database is set to do for new users.
-      }, { onConflict: 'id' })
+      }, { onConflict: 'faculty_id' })
       .select()
       .single();
 

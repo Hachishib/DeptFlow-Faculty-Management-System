@@ -1,7 +1,7 @@
 import { supabaseAdmin }  from "../utils/supabaseAdmin";
 
 export interface FacultyProfileInput {
-  id: string; 
+  faculty_id: string; 
   full_name?: string;
   gender?: string;
   photo_url?: string;
@@ -58,7 +58,7 @@ export const updateFacultyProfile = async (id: string, updates: Partial<FacultyP
     const { data: result, error } = await supabaseAdmin
       .from('faculty_profiles')
       .update(updates)
-      .eq('id', id)
+      .eq('faculty_id', id)
       .select()
       .single();
      

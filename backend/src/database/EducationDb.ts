@@ -48,7 +48,7 @@ export const updateEducation = async (id: number, updates: Partial<EducationInpu
     const { data, error } = await supabaseAdmin
       .from('faculty_education')
       .update(updates)
-      .eq('id', id)
+      .eq('education_id', id)
       .select()
       .single();
       
@@ -66,7 +66,7 @@ export const deleteEducation = async (id: number) => {
     const { error } = await supabaseAdmin
       .from('faculty_education')
       .delete()
-      .eq('id', id);
+      .eq('education_id', id)
       
     if (error) throw error;
     return true;

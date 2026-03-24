@@ -49,14 +49,14 @@ export const updateRoomStatusInDb = async (id: number, is_occupied: boolean) => 
     const { data, error } = await supabaseAdmin
       .from('rooms') 
       .update({ is_occupied }) 
-      .eq('id', id)
+      .eq('room_id', id)
       .select()
       .single();
 
     if (error) throw error;
 
     return {
-      id: data.id,
+      room_id: data.room_id,
       room_no: data.room_no,
       is_occupied: data.is_occupied,
       message: `Room ${data.room_no} is now ${data.is_occupied ? "Occupied" : "Available"}`

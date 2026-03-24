@@ -48,7 +48,7 @@ export const updateWorkExperience = async (id: number, updates: Partial<WorkExpe
     const { data, error } = await supabaseAdmin
       .from('faculty_work_experience')
       .update(updates)
-      .eq('id', id)
+      .eq('experience_id', id)
       .select()
       .single();
       
@@ -66,7 +66,7 @@ export const deleteWorkExperience = async (id: number) => {
     const { error } = await supabaseAdmin
       .from('faculty_work_experience')
       .delete()
-      .eq('id', id);
+      .eq('experience_id', id)
       
     if (error) throw error;
     return true;

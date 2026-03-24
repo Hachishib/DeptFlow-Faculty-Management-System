@@ -49,7 +49,7 @@ export const updateCredential = async (id: number, updates: Partial<CredentialIn
     const { data, error } = await supabaseAdmin
       .from('faculty_credentials')
       .update(updates)
-      .eq('id', id)
+      .eq('credential_id', id)
       .select()
       .single();
       
@@ -67,7 +67,7 @@ export const deleteCredential = async (id: number) => {
     const { error } = await supabaseAdmin
       .from('faculty_credentials')
       .delete()
-      .eq('id', id);
+      .eq('credential_id', id)
       
     if (error) throw error;
     return true;

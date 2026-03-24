@@ -30,6 +30,10 @@ export const createSubject = async (req: Request, res: Response): Promise<any> =
       return res.status(409).json({ message: "Conflict: This Subject Code already exists." });
     }
 
+    if (error.message.includes('valid_scope')) {
+      return res.status(400).json({ message: "Invalid scope. Please check the allowed subject scopes." });
+    }
+
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

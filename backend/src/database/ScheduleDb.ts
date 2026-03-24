@@ -31,7 +31,7 @@ export const createScheduleAssignment = async (scheduleData: ScheduleInput) => {
     const { data: subject } = await supabaseAdmin
       .from('subjects')
       .select('units')
-      .eq('id', scheduleData.subject_id)
+      .eq('subject_id', scheduleData.subject_id)
       .single();
     const unitsToAdd = subject?.units || 3; 
 
@@ -87,7 +87,7 @@ export const updateScheduleAssignment = async (id: number, updates: Partial<Sche
     const { data, error } = await supabaseAdmin
       .from('schedule_assignments')
       .update(updates)
-      .eq('id', id)
+      .eq('schedule_id', id)
       .select()
       .single();
 
@@ -105,11 +105,11 @@ export const deleteScheduleAssignment = async (id: number) => {
     const { data: schedule } = await supabaseAdmin
       .from('schedule_assignments')
       .select('faculty_id, subject_id')
-      .eq('id', id)
+      .eq('schedule_id', id)
       .single();
 
     if (schedule) {
-       const { data: subject } = await supabaseAdmin.from('subjects').select('units').eq('id', schedule.subject_id).single();
+       const { data: subject } = await supabaseAdmin.from('subjects').select('units').eq('subject_id', schedule.subject_id).single();
        const unitsToSubtract = subject?.units || 3;
        
        const { data: faculty } = await supabaseAdmin.from('faculty_profiles').select('current_units').eq('id', schedule.faculty_id).single();
@@ -119,7 +119,7 @@ export const deleteScheduleAssignment = async (id: number) => {
     }
 
     // 2. Delete the actual schedule
-    const { error } = await supabaseAdmin.from('schedule_assignments').delete().eq('id', id);
+    const { error } = await supabaseAdmin.from('schedule_assignments').delete().eq('schedule_id', id);
     if (error) throw error;
 
     return { status: "success", message: `Schedule ${id} successfully deleted` };

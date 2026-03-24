@@ -31,7 +31,7 @@ export const getResearchByFaculty = async (faculty_id: string) => {
       .from('faculty_research')
       .select('*')
       .eq('faculty_id', faculty_id)
-      .order('id', { ascending: false }); // Show newest entries first
+      .order('research_id', { ascending: false });
       
     if (error) throw error;
     return data;
@@ -47,7 +47,7 @@ export const updateResearch = async (id: number, updates: Partial<ResearchInput>
     const { data, error } = await supabaseAdmin
       .from('faculty_research')
       .update(updates)
-      .eq('id', id)
+      .eq('research_id', id)
       .select()
       .single();
       
@@ -65,7 +65,7 @@ export const deleteResearch = async (id: number) => {
     const { error } = await supabaseAdmin
       .from('faculty_research')
       .delete()
-      .eq('id', id);
+      .eq('research_id', id);
       
     if (error) throw error;
     return true;
