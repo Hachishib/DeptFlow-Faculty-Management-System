@@ -25,6 +25,6 @@ export const googleLogin = async (req: Request, res: Response): Promise<any> => 
     
   } catch (error: any) {
     console.error("FULL CONTROLLER ERROR:", error); 
-    return res.status(500).json({ message: "Login failed", error: error.message });
+    return res.status(500).json({success: false, message: error.message});
   }
 };
