@@ -1,95 +1,12 @@
 import { Request, Response } from "express";
 import { 
-  createAnnouncementToDb, 
-  getAnnouncementsFromDb, 
-  acknowledgeAnnouncementInDb, 
-  getReactionsFromDb 
+  getAnnouncementByIdFromDb, 
+  updateAnnouncementInDb, 
+  deleteAnnouncementFromDb 
 } from "../../database/Announcement/AnnouncementDb";
 
-
-// GET: Retrieve all announcements
-export const getAnnouncements = async (req: Request, res: Response) => {
-  try {
-    const announcements = await getAnnouncementsFromDb();
-    return res.status(200).json({ data: announcements });
-  } catch (error: any) {
-    console.error("Fetch Announcements Error:", error);
-    return res.status(500).json({ message: "Failed to retrieve announcements" });
-  }
-};
-
-// POST: Create a new announcement
-export const createAnnouncement = async (req: Request, res: Response) => {
-  try {
-    const { 
-      title,
-      description,
-      audience,
-      category,
-      file_attachment_url,
-      created_by 
-    } = req.body;
-
-    // Basic validation for required fields
-    if (!title || !description || !created_by) {
-      return res.status(400).json({ message: "Title, Description, and Created By are required" });
-    }
-
-    const payload = {
-      title,
-      description,
-      audience,
-      category,
-      file_attachment_url,
-      created_by,
-      date_announced: new Date().toISOString() // Automatically set the current date
-    };
-
-    const newAnnouncement = await createAnnouncementToDb(payload);
-    
-    return res.status(201).json({
-      message: "Announcement created successfully",
-      data: newAnnouncement
-    });
-  } catch (error: any) {
-    console.error("Create Announcement Error:", error);
-    return res.status(500).json({ message: error.message || "Internal Server Error" });
-  }
-};
-// POST: Acknowledge an announcement
-export const acknowledgeAnnouncement = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params; 
-    const { faculty_id } = req.body; 
-
-    if (!id || !faculty_id) {
-      return res.status(400).json({ message: "Announcement ID and Faculty ID are required" });
-    }
-
-    const payload = {
-      announcement_id: Number(id), 
-      faculty_id
-    };
-
-    const reaction = await acknowledgeAnnouncementInDb(payload);
-
-    return res.status(201).json({
-      message: "Announcement acknowledged",
-      data: reaction
-    });
-  } catch (error: any) {
-    console.error("Acknowledge Announcement Error:", error);
-    
-    if (error.message.includes('duplicate key')) {
-        return res.status(409).json({ message: "You have already acknowledged this announcement" });
-    }
-
-    return res.status(500).json({ message: error.message || "Internal Server Error" });
-  }
-};
-
-// GET: Retrieve all reactions for a specific announcement
-export const getAnnouncementReactions = async (req: Request, res: Response) => {
+// GET: Retrieve a single announcement by ID
+export const getAnnouncementById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -97,15 +14,75 @@ export const getAnnouncementReactions = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Announcement ID is required" });
     }
 
-    const reactions = await getReactionsFromDb(Number(id));
+    const announcement = await getAnnouncementByIdFromDb(id as string);
+    return res.status(200).json({ data: announcement });
+  } catch (error: any) {
+    console.error("Fetch Announcement By ID Error:", error);
+    if (error.code === 'PGRST116') {
+      return res.status(404).json({ message: "Announcement not found" });
+    }
+    return res.status(500).json({ message: "Failed to retrieve announcement" });
+  }
+};
 
-    return res.status(200).json({ 
-        message: "Reactions retrieved successfully",
-        count: reactions.length, 
-        data: reactions 
+// PUT/PATCH: Update an existing announcement
+export const updateAnnouncement = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { 
+      title,
+      description, 
+      audience,
+      category,
+      is_pinned,
+      file_attachment_url
+    } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "Announcement ID is required for updating" });
+    }
+
+    const payload: any = {};
+    if (title !== undefined) payload.title = title;
+    if (description !== undefined) payload.content = description; 
+    if (audience !== undefined) payload.audience = audience;
+    if (category !== undefined) payload.category = category;
+    if (is_pinned !== undefined) payload.is_pinned = is_pinned;
+    if (file_attachment_url !== undefined) payload.file_attachment_url = file_attachment_url;
+
+    // Prevent unnecessary database calls if the body is empty
+    if (Object.keys(payload).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided for update" });
+    }
+
+    const updatedAnnouncement = await updateAnnouncementInDb(id as string , payload);
+    
+    return res.status(200).json({
+      message: "Announcement updated successfully",
+      data: updatedAnnouncement
     });
   } catch (error: any) {
-    console.error("Fetch Reactions Error:", error);
-    return res.status(500).json({ message: "Failed to retrieve reactions" });
+    console.error("Update Announcement Error:", error);
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+// DELETE: Remove an announcement
+export const deleteAnnouncement = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Announcement ID is required for deletion" });
+    }
+
+    await deleteAnnouncementFromDb(id as string);
+    
+    return res.status(200).json({
+      message: "Announcement deleted successfully"
+    });
+  } catch (error: any) {
+    console.error("Delete Announcement Error:", error);
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };

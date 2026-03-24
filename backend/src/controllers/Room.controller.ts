@@ -19,13 +19,13 @@ export const fetchRooms = async (req: Request, res: Response) => {
 // POST: Add a new room
 export const createRoom = async (req: Request, res: Response) => {
   try {
-    const { room_no, is_occupied, room_schedule } = req.body;
+    const { room_no, is_occupied } = req.body;
 
     if (!room_no) {
       return res.status(400).json({ message: "Room Number (room_no) is required" });
     }
 
-    const newRoom = await addRoomToDb({ room_no, is_occupied, room_schedule });
+    const newRoom = await addRoomToDb({ room_no, is_occupied});
     return res.status(201).json({ message: "Room added successfully", data: newRoom });
   } catch (error) {
     console.error("Create Room Error:", error);

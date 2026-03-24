@@ -4,7 +4,6 @@ export interface RoomInput {
   id? : number;
   room_no: string;
   is_occupied?: boolean;
-  room_schedule?: string;
 }
 
 // 1. Fetch all rooms
@@ -52,7 +51,7 @@ export const addRoomToDb = async (roomData: RoomInput) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('rooms')
-      .insert([roomData]) // Supabase handles the ID automatically
+      .insert([roomData]) 
       .select()
       .single();
 
