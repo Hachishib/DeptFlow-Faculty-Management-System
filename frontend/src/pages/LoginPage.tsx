@@ -34,20 +34,20 @@ export default function LoginPage() {
         const profilePhoto = userProfile.picture;
         const fullName = userProfile.name;
 
-
-        // if (!email.endsWith("@tup.edu.ph")) {
-        //   console.error("Access Denied: Must use a TUP institutional email.");
-        //   return;
-        // }
+        if (!email.endsWith("@tup.edu.ph")) {
+          console.error("Access Denied: Must use a TUP institutional email.");
+          return;
+        }
+        
 
         const success = await handleGoogleAuth({googleId, email, profilePhoto, fullName});
-        console.log("Message from backend: ", success.message);
+        console.log("Message from backend: ", success);
 
 
         if (success.role === 'admin') {
           navigate("/admin/dashboard");
         } else {
-            navigate("/prof/personal-info"); // Redirects non-admins to the prof page
+            navigate("/prof/personal-info");
         }
       
       } catch (error) {
