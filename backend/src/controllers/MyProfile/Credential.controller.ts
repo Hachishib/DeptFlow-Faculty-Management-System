@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
 import { 
-  createEducation as addEducation, // ✅ FIX: match DB function
+  createEducation as addEducation, 
   getEducationByFaculty, 
   updateEducation, 
   deleteEducation 
-} from "../database/MyProfile/EducationDb";
+} from "../../database/MyProfile/CredentialsDb";
 
 export const createEducation = async (req: Request, res: Response): Promise<any> => {
   try {
     const { faculty_id, degree_level, discipline, school } = req.body;
 
-    // ✅ FIX: match DB fields (use your actual column names)
     if (!faculty_id || !degree_level || !discipline || !school) {
       return res.status(400).json({ message: "Missing required education fields." });
     }
@@ -36,7 +35,7 @@ export const fetchFacultyEducation = async (req: Request, res: Response): Promis
       return res.status(400).json({ message: "Faculty ID is required" });
     }
 
-    const educationList = await getEducationByFaculty(faculty_id);
+    const educationList = await getEducationByFaculty(faculty_id as string);
 
     return res.status(200).json({ data: educationList });
 
@@ -55,7 +54,7 @@ export const editEducation = async (req: Request, res: Response): Promise<any> =
       return res.status(400).json({ message: "Invalid Education ID" });
     }
 
-    const updatedEd = await updateEducation(id, updates);
+    const updatedEd = await updateEducation(id as string, updates);
 
     return res.status(200).json({
       message: "Education updated",
@@ -76,7 +75,7 @@ export const removeEducation = async (req: Request, res: Response): Promise<any>
       return res.status(400).json({ message: "Invalid Education ID" });
     }
 
-    await deleteEducation(id);
+    await deleteEducation(id as string);
 
     return res.status(200).json({
       message: "Education record deleted."

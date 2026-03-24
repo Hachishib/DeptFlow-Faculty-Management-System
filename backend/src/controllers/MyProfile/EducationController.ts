@@ -6,13 +6,10 @@ import {
 } from "../../database/MyProfile/EducationDb";
 
 
-
-// GET: Retrieve education records for a specific faculty member
 export const getFacultyEducation = async (req: Request, res: Response) => {
   try {
     const { faculty_id } = req.params;
 
-    // Type Guard: Ensures faculty_id is exactly a string
     if (typeof faculty_id !== 'string') {
       return res.status(400).json({ message: "A valid Faculty ID string is required" });
     }
@@ -24,7 +21,6 @@ export const getFacultyEducation = async (req: Request, res: Response) => {
   }
 };
 
-// POST: Add a new education record to a faculty profile
 export const createEducation = async (req: Request, res: Response) => {
   try {
     const { 

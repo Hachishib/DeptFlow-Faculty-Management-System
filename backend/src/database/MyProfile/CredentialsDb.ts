@@ -13,7 +13,7 @@ export interface EducationInput {
 export const createEducation = async (educationData: EducationInput) => {
   try {
     const { data, error } = await supabaseAdmin
-      .from('education') // ✅ FIX: correct table
+      .from('education') 
       .insert([educationData])
       .select()
       .single();

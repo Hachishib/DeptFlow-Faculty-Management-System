@@ -1,4 +1,4 @@
-// import { supabaseAdmin }  from "../../utils/supabaseAdmin";
+import { supabaseAdmin }  from "../../utils/supabaseAdmin";
 
 export interface FacultyProfileInput {
   id: string; 
@@ -18,62 +18,6 @@ export interface FacultyProfileInput {
 
 
 
-let mockFacultyProfiles: FacultyProfileInput[] = [
-  {
-    id: "1", // Hardcoded to match our other mock files
-    employee_id: "EMP-2023-001",
-    full_name: "Dr. Jane Doe",
-    email: "jane.doe@university.edu",
-    phone_number: "09123456789",
-    age: 35,
-    birthday: "1991-04-15",
-    gender: "Female",
-    city: "Manila",
-    province: "Metro Manila",
-    rank_designation: "Associate Professor",
-    employment_type: "Full-Time",
-    date_hired: "2023-08-01"
-  },
-  {
-    id: "2",
-    employee_id: "EMP-2024-042",
-    full_name: "John Smith",
-    email: "john.smith@university.edu",
-    phone_number: "09987654321",
-    age: 29,
-    birthday: "1995-11-20",
-    gender: "Male",
-    city: "Quezon City",
-    province: "Metro Manila",
-    rank_designation: "Instructor I",
-    employment_type: "Part-Time",
-    date_hired: "2024-01-15"
-  }
-];
-
-export const createFacultyProfile = async (profileData: FacultyProfileInput) => {
-  console.log("Mock DB: Creating faculty profile...");
-  const newProfile = { ...profileData, id: profileData.id || `mock-fac-${Date.now()}` };
-  mockFacultyProfiles.push(newProfile);
-  return newProfile;
-};
-
-export const getAllFaculty = async () => {
-  console.log("Mock DB: Fetching all faculty profiles...");
-  return mockFacultyProfiles;
-};
-
-export const updateFacultyProfile = async (id: string, updates: Partial<FacultyProfileInput>) => {
-  console.log(`Mock DB: Updating faculty profile ${id}...`);
-  const index = mockFacultyProfiles.findIndex(fac => fac.id === id);
-  if (index === -1) throw new Error("Faculty profile not found in mock database");
-  
-  mockFacultyProfiles[index] = { ...mockFacultyProfiles[index], ...updates };
-  return mockFacultyProfiles[index];
-};
-
-
-/*
 export const createFacultyProfile = async (profileData: FacultyProfileInput) => {
   try {
     const { data, error } = await supabaseAdmin
@@ -120,4 +64,3 @@ export const updateFacultyProfile = async (id: string, updates: Partial<FacultyP
     throw new Error(`Failed to update faculty: ${error.message}`);
   }
 };
-*/
