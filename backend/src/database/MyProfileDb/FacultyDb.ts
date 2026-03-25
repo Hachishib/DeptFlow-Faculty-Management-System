@@ -1,13 +1,13 @@
-import { supabaseAdmin }  from "../CONTROLLERS/utils/supabaseAdmin";
+import { supabaseAdmin }  from "../../CONTROLLERS/utils/supabaseAdmin";
 
 export interface FacultyProfileInput {
   faculty_id: string; 
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
+  full_name?: string;
   gender?: string;
   photo_url?: string;
-  max_units?: number; 
+  is_present?: boolean;
+  max_units?: number;
+  role?: string; 
   employment_type?: string; 
   birthday?: string;
   phone_number?: string;
@@ -41,13 +41,7 @@ export const getAllFaculty = async () => {
   try {
     const { data, error } = await supabaseAdmin
       .from('faculty_profiles')
-      .select(`
-        *,
-        auth_google (
-          email,
-          role
-        )
-      `);
+      .select('*');
      
     if (error) throw error;  
     return data;
@@ -72,6 +66,7 @@ export const updateFacultyProfile = async (id: string, updates: Partial<FacultyP
     return result;
 
   } catch (error: any) {
+    // FIXED: Corrected the copy-paste error message!
     console.error("DB Update Faculty Error:", error.message); 
     throw new Error(`Failed to update faculty: ${error.message}`);
   }

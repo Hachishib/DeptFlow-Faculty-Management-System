@@ -3,7 +3,7 @@ import {
   createFacultyProfile, 
   getAllFaculty, 
   updateFacultyProfile 
-} from "../DATABASE/FacultyDb";
+} from "../../DATABASE/MyProfileDb/FacultyDb";
 
 export const getFacultyList = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -17,10 +17,10 @@ export const getFacultyList = async (req: Request, res: Response): Promise<any> 
 
 export const createFaculty = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { faculty_id, first_name, last_name } = req.body;
+    const { faculty_id, full_name } = req.body;
 
-    if (!faculty_id || !first_name || !last_name) {
-      return res.status(400).json({ message: "Faculty ID, First Name, and Last Name are required" });
+    if (!faculty_id || !full_name) {
+      return res.status(400).json({ message: "ID and Full Name are required" });
     }
 
     const newProfile = await createFacultyProfile(req.body);

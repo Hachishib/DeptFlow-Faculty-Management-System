@@ -1,6 +1,5 @@
-import { supabaseAdmin }  from "../utils/supabaseAdmin";
+import { supabaseAdmin }  from "../CONTROLLERS/utils/supabaseAdmin";
 
-// Updated input interface to match our simple DB structure
 export interface RoomInput {
   room_no: string;
   is_occupied?: boolean;
@@ -29,7 +28,6 @@ export const addRoomToDb = async (roomData: RoomInput) => {
       .from('rooms')
       .insert([{ 
         room_no: roomData.room_no,
-        // If not specified, default new rooms to 'available' (false)
         is_occupied: roomData.is_occupied || false 
       }]) 
       .select()

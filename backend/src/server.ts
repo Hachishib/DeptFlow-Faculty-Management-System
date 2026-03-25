@@ -1,16 +1,16 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/googleauth/auth"; 
-import facultyRoutes from "./routes/faculty/Facultyinfo";
+import facultyRoutes from "./routes/MyProfileRwt/faculty/Facultyinfo";
 import scheduleRoutes from "./routes/schedules/Scheduleinfo";
-import announcementRoutes from "./routes/announcements/AnnouncementInfo";
-import RoomRoutes from "./routes/rooms/RoomInfo";
-import SubjectRoutes from "./routes/subjects/SubjectInfo";
-import auditLogRoutes from "./routes/auditlogs/AuditlogInfo";
-import educationRoutes from "./routes/education/EducationInfo";
-import credentialRoutes from "./routes/credential/CredentialInfo";
+import announcementRoutes from "./routes/AnnouncementRwt/announcements/AnnouncementInfo";
+import RoomRoutes from "./routes/RoomInfo";
+import SubjectRoutes from "./routes/SubjectInfo";
+import auditLogRoutes from "./routes/AuditlogInfo";
+import educationRoutes from "./routes/MyProfileRwt/EducationInfo";
+import credentialRoutes from "./routes/MyProfileRwt/CredentialInfo";
 import workExperienceRoutes from "./routes/work_experience/WorkExperienceInfo";
-import researchRoutes from "./routes/research/ResearchInfo";
+import researchRoutes from "./routes/MyProfileRwt/ResearchInfo";
 
 const app = express();
 

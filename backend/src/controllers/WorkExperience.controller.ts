@@ -4,7 +4,7 @@ import {
   getWorkExperienceByFaculty, 
   updateWorkExperience, 
   deleteWorkExperience 
-} from "../database/WorkExperienceDb";
+} from "../DATABASE/WorkExperienceDb";
 
 export const createWorkExperience = async (req: Request, res: Response): Promise<any> => {
   try {

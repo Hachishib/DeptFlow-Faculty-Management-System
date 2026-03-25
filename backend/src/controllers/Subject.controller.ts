@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllSubjectsFromDb, addSubjectToDb } from "../database/SubjectDb";
+import { getAllSubjectsFromDb, addSubjectToDb } from "../DATABASE/SubjectDb";
 
 export const fetchSubjects = async (req: Request, res: Response): Promise<any> => {
   try {

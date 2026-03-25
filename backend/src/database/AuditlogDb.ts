@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../utils/supabaseAdmin";
+import { supabaseAdmin } from "../CONTROLLERS/utils/supabaseAdmin";
 
 export interface AuditLogInput {
   faculty_id: string;

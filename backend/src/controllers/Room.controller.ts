@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllRoomsFromDb, addRoomToDb, updateRoomStatusInDb } from "../database/RoomDb";
+import { getAllRoomsFromDb, addRoomToDb, updateRoomStatusInDb } from "../DATABASE/RoomDb";
 
 export const fetchRooms = async (req: Request, res: Response): Promise<any> => {
   try {
