@@ -9,43 +9,52 @@ export interface GoogleUserInput {
 
 export const syncGoogleUserToDb = async (userData: GoogleUserInput) => {
   try {
-    
-    const { data: authData, error: authError } = await supabaseAdmin
-      .from('auth_google') 
-      .upsert({
-        google_id: userData.googleId,      
-        email: userData.email            
-        
-      }, { onConflict: 'google_id' })
-      .select('role')
+    // The Whitelist Check
+    const { data: existingProfile, error: searchError } = await supabaseAdmin
+      .from('faculty_profiles')
+      .select('*')
+      .eq('email', userData.email)
       .single();
 
-    if (authError) throw authError;
+
+    if (searchError || !existingProfile) {
+      throw new Error("whitelist_denied"); 
+    }
+
+    const matchedFacultyId = existingProfile.faculty_id;
 
     const nameParts = userData.fullName.split(' ');
     const first = nameParts[0];
     const last = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('faculty_profiles')
-      .upsert({
-        faculty_id: userData.googleId,
-        first_name: first,
-        last_name: last,
-        photo_url: userData.profilePhoto
-      }, { onConflict: 'faculty_id' })
-      .select()
-      .single();
+    if (!existingProfile.first_name || !existingProfile.last_name || !existingProfile.photo_url) {
+      await supabaseAdmin.from('faculty_profiles').update({ 
+        first_name: existingProfile.first_name || first,
+        last_name: existingProfile.last_name || last,
+        photo_url: existingProfile.photo_url || userData.profilePhoto
+      }).eq('faculty_id', matchedFacultyId);
+      
+      existingProfile.first_name = existingProfile.first_name || first;
+      existingProfile.last_name = existingProfile.last_name || last;
+      existingProfile.photo_url = existingProfile.photo_url || userData.profilePhoto;
+    }
 
-    if (profileError) throw profileError;
+    const { error: authError } = await supabaseAdmin
+      .from('auth_google') 
+      .upsert({
+        google_id: userData.googleId,      
+        email: userData.email,
+        faculty_id: matchedFacultyId 
+      }, { onConflict: 'google_id' });
+
+    if (authError) throw authError;
 
     return {
-      ...profile,
-      role: authData.role 
-    }; 
+      ...existingProfile 
+    };
 
   } catch (error: any) {
     console.error("Supabase Auth Sync Error:", error.message);
-    throw new Error(`Failed to sync user data: ${error.message}`);
+    throw error; 
   }
 };

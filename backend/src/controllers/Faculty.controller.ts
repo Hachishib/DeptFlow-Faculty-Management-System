@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { Request, Response } from "express";
 import { 
   createFacultyProfile, 
@@ -17,26 +18,27 @@ export const getFacultyList = async (req: Request, res: Response): Promise<any> 
 
 export const createFaculty = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { faculty_id, first_name, last_name } = req.body;
+    const { email } = req.body; 
 
-    if (!faculty_id || !first_name || !last_name) {
-      return res.status(400).json({ message: "Faculty ID, First Name, and Last Name are required" });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required to whitelist a new faculty member." });
     }
+    const faculty_id = req.body.faculty_id || crypto.randomUUID(); 
 
-    const newProfile = await createFacultyProfile(req.body);
+    const newProfile = await createFacultyProfile({
+      faculty_id,
+      email
+    });
     
     return res.status(201).json({
-      message: "Faculty profile created successfully",
+      message: "Faculty successfully whitelisted!",
       data: newProfile
     });
   } catch (error: any) {
     console.error("Create Faculty Error:", error.message);
-    
-    // Catch Duplicate Employee ID
-    if (error.message.includes('unique constraint') && error.message.includes('employee_id')) {
-      return res.status(409).json({ message: "Conflict: This Employee ID is already registered to another faculty member." });
+    if (error.message.includes('unique constraint') && error.message.includes('email')) {
+      return res.status(409).json({ message: "Conflict: This email is already on the whitelist." });
     }
-
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };
