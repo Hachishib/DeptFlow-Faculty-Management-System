@@ -3,7 +3,7 @@ import {
   getFacultyList, 
   createFaculty, 
   updateFacultyStatus 
-} from "../../CONTROLLERS/MyProfileCtrl/Faculty.controller.js";
+} from "../../controllers/MyProfileCtrl/Faculty.controller.js";
 
 const router = Router();
 

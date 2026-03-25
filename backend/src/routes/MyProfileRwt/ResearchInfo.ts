@@ -4,7 +4,7 @@ import {
   fetchFacultyResearch, 
   editResearch,
   removeResearch 
-} from "../../CONTROLLERS/MyProfileCtrl/Research.controller";
+} from "../../controllers/MyProfileCtrl/Research.controller";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createAuditLogInDb, getAuditLogsFromDb } from "../DATABASE/AuditlogDb";
+import { createAuditLogInDb, getAuditLogsFromDb } from "../database/AuditlogDb";
 
 // POST: Create a new audit log
 export const createAuditLog = async (req: Request, res: Response) => {

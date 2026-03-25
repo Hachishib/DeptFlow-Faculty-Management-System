@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllRoomsFromDb, addRoomToDb, updateRoomStatusInDb } from "../DATABASE/RoomDb";
+import { getAllRoomsFromDb, addRoomToDb, updateRoomStatusInDb } from "../database/RoomDb";
 
 export const fetchRooms = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -25,7 +25,7 @@ export const createRoom = async (req: Request, res: Response): Promise<any> => {
   } catch (error: any) {
     console.error("Create Room Error:", error.message);
     
-    // ADVANCED: If our Supabase UNIQUE rule catches a duplicate, send a nice error to the frontend!
+  
     if (error.message.includes('duplicate key') || error.message.includes('unique_room_no')) {
       return res.status(409).json({ message: "This room number already exists." });
     }

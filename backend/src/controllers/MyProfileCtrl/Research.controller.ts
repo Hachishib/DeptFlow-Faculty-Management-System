@@ -4,7 +4,7 @@ import {
   getResearchByFaculty, 
   updateResearch, 
   deleteResearch 
-} from "../../DATABASE/MyProfileDb/ResearchDb";
+} from "../../database/MyProfileDb/ResearchDb";
 
 export const createResearch = async (req: Request, res: Response): Promise<any> => {
   try {

@@ -4,7 +4,7 @@ import {
   fetchFacultyCredentials, 
   editCredential,
   removeCredential 
-} from "../../CONTROLLERS/MyProfileCtrl/Credential.controller";
+} from "../../controllers/MyProfileCtrl/Credential.controller";
 
 const router = Router();
 

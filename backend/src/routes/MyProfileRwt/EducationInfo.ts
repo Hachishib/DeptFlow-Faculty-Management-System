@@ -4,7 +4,7 @@ import {
   fetchFacultyEducation, 
   editEducation,
   removeEducation 
-} from "../../CONTROLLERS/MyProfileCtrl/Education.controller";
+} from "../../controllers/MyProfileCtrl/Education.controller";
 
 const router = Router();
 

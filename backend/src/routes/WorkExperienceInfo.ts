@@ -4,7 +4,7 @@ import {
   fetchFacultyWorkExperience, 
   editWorkExperience,
   removeWorkExperience 
-} from "../CONTROLLERS/WorkExperience.controller";
+} from "../controllers/WorkExperience.controller";
 
 const router = Router();
 

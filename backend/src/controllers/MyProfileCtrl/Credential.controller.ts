@@ -4,7 +4,7 @@ import {
   getCredentialsByFaculty, 
   updateCredential, 
   deleteCredential 
-} from "../../DATABASE/MyProfileDb/CredentialDb";
+} from "../../database/MyProfileDb/CredentialDb";
 
 export const createCredential = async (req: Request, res: Response): Promise<any> => {
   try {

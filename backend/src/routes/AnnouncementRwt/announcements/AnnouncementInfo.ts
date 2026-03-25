@@ -4,7 +4,7 @@ import {
   fetchAnnouncements, 
   acknowledgeAnnouncement, 
   fetchReactions 
-} from "../../../CONTROLLERS/AnnouncementCtrl/Announcement.controller";
+} from "../../../controllers/AnnouncementCtrl/Announcement.controller";
 
 const router = Router();
 

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { 
   fetchSubjects, 
   createSubject 
-} from "../CONTROLLERS/Subject.controller";
+} from "../controllers/Subject.controller";
 
 const router = Router();
 

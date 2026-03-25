@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fetchRooms, createRoom, updateRoomStatus } from "../CONTROLLERS/Room.controller";
+import { fetchRooms, createRoom, updateRoomStatus } from "../controllers/Room.controller";
 
 const router = Router();
 

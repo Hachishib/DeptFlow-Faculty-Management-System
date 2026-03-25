@@ -3,7 +3,7 @@ import {
   createFacultyProfile, 
   getAllFaculty, 
   updateFacultyProfile 
-} from "../../DATABASE/MyProfileDb/FacultyDb";
+} from "../../database/MyProfileDb/FacultyDb";
 
 export const getFacultyList = async (req: Request, res: Response): Promise<any> => {
   try {

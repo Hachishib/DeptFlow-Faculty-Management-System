@@ -4,7 +4,7 @@ import {
   getAnnouncementsFromDb, 
   acknowledgeAnnouncementInDb, 
   getReactionsFromDb 
-} from "../../DATABASE/AnnouncementDb/AnnouncementDb";
+} from "../../database/AnnouncementDb/AnnouncementDb";
 
 export const createAnnouncement = async (req: Request, res: Response): Promise<any> => {
   try {

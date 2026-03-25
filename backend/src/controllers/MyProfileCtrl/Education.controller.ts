@@ -4,7 +4,7 @@ import {
     getEducationByFaculty, 
     updateEducation, 
     deleteEducation 
-} from "../../DATABASE/MyProfileDb/EducationDb";
+} from "../../database/MyProfileDb/EducationDb";
 
 export const createEducation = async (req: Request, res: Response): Promise<any> => {
   try {

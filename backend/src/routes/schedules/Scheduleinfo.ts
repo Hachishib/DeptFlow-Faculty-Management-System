@@ -4,7 +4,7 @@ import {
   fetchSchedules, 
   updateSchedule, 
   deleteSchedule 
-} from "../../CONTROLLERS/managescheduleCtrl/Schedule.controller";
+} from "../../controllers/managescheduleCtrl/Schedule.controller";
 
 const router = Router();
 
