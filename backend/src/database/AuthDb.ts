@@ -9,35 +9,40 @@ export interface GoogleUserInput {
 
 export const syncGoogleUserToDb = async (userData: GoogleUserInput) => {
   try {
-    // STEP 1: Save the Keycard (Login Credentials)
-    const { error: authError } = await supabaseAdmin
+    
+    const { data: authData, error: authError } = await supabaseAdmin
       .from('auth_google') 
       .upsert({
         google_id: userData.googleId,      
         email: userData.email            
-      }, { onConflict: 'google_id' });
+        
+      }, { onConflict: 'google_id' })
+      .select('role')
+      .single();
 
     if (authError) throw authError;
 
-    // STEP 2: Create or Update the Employee File (Faculty Profile)
-    // We use 'upsert' here too! If they update their Google Profile Photo, 
-    // it will automatically update their picture in your system the next time they log in.
+    const nameParts = userData.fullName.split(' ');
+    const first = nameParts[0];
+    const last = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('faculty_profiles')
       .upsert({
         faculty_id: userData.googleId,
-        full_name: userData.fullName,
+        first_name: first,
+        last_name: last,
         photo_url: userData.profilePhoto
-        // Note: We don't send a 'role' here, so it safely defaults 
-        // to whatever your Supabase database is set to do for new users.
       }, { onConflict: 'faculty_id' })
       .select()
       .single();
 
     if (profileError) throw profileError;
 
-    // We return the 'profile' because it contains the cool stuff the frontend needs (like role, full name)
-    return profile; 
+    return {
+      ...profile,
+      role: authData.role 
+    }; 
 
   } catch (error: any) {
     console.error("Supabase Auth Sync Error:", error.message);
