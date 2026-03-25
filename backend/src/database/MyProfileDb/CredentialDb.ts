@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../../CONTROLLERS/utils/supabaseAdmin";
+import { supabaseAdmin } from "../../utils/supabaseAdmin";
 
 export interface CredentialInput {
   faculty_id: string;

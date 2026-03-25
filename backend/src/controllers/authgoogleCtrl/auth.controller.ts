@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { syncGoogleUserToDb } from "../database/authgoogle/AuthDb";
+import { syncGoogleUserToDb } from "../../DATABASE/authgoogleDb/AuthDb";
 
 export const googleLogin = async (req: Request, res: Response): Promise<any> => {
   try {
