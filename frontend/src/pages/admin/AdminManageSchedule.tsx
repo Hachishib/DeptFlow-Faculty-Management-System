@@ -11,45 +11,41 @@
 // EDITABLE SECTIONS are marked with: // ✏️ EDIT
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Plus, Pencil, Trash2, Search, LayoutGrid, TableProperties,
-  Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, X, 
-  Users, CalendarDays, BookOpen, Clock,
+  Sparkles, CheckCircle2, AlertTriangle, ShieldCheck, X,
+  Users, CalendarDays, BookOpen, Clock, DoorOpen, Info,
 } from "lucide-react";
+import { enrichConflictsWithGemini, type GeminiScheduleContext } from "../../utils/geminiSchedule";
+import { generateSchedule, type FacultyUtilization, type MissingEntry, type ScheduleAssignment } from "../../utils/geminiSchedHelper";
+
 
 type ScheduleStatus = "draft" | "finalized";
 type ConflictType   = "HARD" | "SOFT";
 type ViewMode = "card" | "timetable";
 
-interface ScheduleAssignment {
-  id: string;
-  faculty_id: string;
-  subject_id: string;
-  room_id: string;
-  day: string;
-  start_time: string;
-  end_time: string;
-  section: string;
-  status: ScheduleStatus;
-}
-
-interface Faculty {
-  id: string;
-  avatarColor?: string;
-  role?: string;
-  type?: string;
-  max_units?: number;
-  initials?: string;
-  personal: { firstName: string; lastName: string; email: string; phone: string; employeeId: string; designation: string; employmentType: string; dateHired: string; status: string };
-  education?: any[];
-  credentials?: any[];
-  research?: any[];
-  schedule?: any[];
-}
 
 const getAvatarColor = (f: ReturnType<typeof getFaculty>): string => 
   (f && 'avatarColor' in f && typeof f.avatarColor === 'string' && f.avatarColor) ? f.avatarColor : "bg-gray-400";
+
+interface ConflictFix {
+  scheduleId: string;
+  field: keyof ScheduleAssignment;
+  value: string;
+}
+
+// A transfer moves one or more schedule entries to a different faculty member.
+// Used for overload resolution so the admin can click once to reassign.
+interface ConflictTransfer {
+  scheduleId:    string;  // which entry to move
+  subjectCode:   string;  // human label for the button
+  units:         number;  // subject unit value for display
+  toFacultyId:   string;  // destination faculty
+  toFacultyName: string;
+}
+// Alias so new code from previous session compiles without changes
+type OverloadTransfer = ConflictTransfer;
 
 interface Conflict {
   id: string;
@@ -58,7 +54,8 @@ interface Conflict {
   affected: string[];
   message: string;
   suggestion: string;
-  fix: { scheduleId: string; field: keyof ScheduleAssignment; value: string } | null;
+  fix:       ConflictFix | null;       // single-field patch (day, room, end_time)
+  transfers: ConflictTransfer[];       // one-click faculty reassignments
   dismissed: boolean;
   applied: boolean;
 }
@@ -74,9 +71,6 @@ import ROOM_LIST from "../../mock/schedule.json";
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const HOURS_PER_UNIT = 1;
 
-
-
-
 // ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
@@ -89,9 +83,28 @@ const getFacultyName = (f: ReturnType<typeof getFaculty>) => f ? `${f.personal.f
 const toMins     = (t: string)  => { const [h,m] = t.split(":").map(Number); return h*60+m; };
 const overlaps   = (aS:string,aE:string,bS:string,bE:string) =>
   toMins(aS) < toMins(bE) && toMins(aE) > toMins(bS);
-const getTotalUnits = (sched: ScheduleAssignment[], fid: string) =>
-  sched.filter(s=>s.faculty_id===fid).reduce((n,s)=>n+(getSubject(s.subject_id)?.units||0),0);
-const getFacultyMaxUnits = (f: ReturnType<typeof getFaculty>) => f ? ((f as Faculty).max_units ?? 21) : 21;
+
+// getTotalUnits — counts academic units using subject.units (the credit value),
+// NOT clock hours. This matches how TUP/CHED defines faculty load: a 3-unit
+// subject is 3 units of load regardless of whether it meets for 1 hr or 3 hrs.
+// Split sessions (same session_group_id) are counted only ONCE.
+const getTotalUnits = (sched: ScheduleAssignment[], fid: string): number => {
+  const mine = sched.filter(s => s.faculty_id === fid && s.day !== "TBD");
+  const deduped = mine.filter((s, _, arr) => {
+    if (!s.session_group_id) return true;
+    return arr.findIndex(x => x.session_group_id === s.session_group_id) === arr.indexOf(s);
+  });
+  return deduped.reduce((n, s) => n + (getSubject(s.subject_id)?.units ?? 0), 0);
+};
+
+// getFacultyMaxUnits — derived from employment type, NOT f.max_units.
+// f.max_units is often absent; employment type is always set.
+// Matches the cap logic in geminiSchedHelper.ts exactly.
+const getFacultyMaxUnits = (f: ReturnType<typeof getFaculty>): number => {
+  if (!f) return 21;
+  const emp = (f as any).personal?.employmentType ?? "";
+  return emp === "Part-time" ? 12 : 21;
+};
 const getDurationHours = (start: string, end: string): number => {
   if (!start || !end) return 0;
   return (toMins(end) - toMins(start)) / 60;
@@ -100,6 +113,52 @@ const getDurationHours = (start: string, end: string): number => {
 const isHourUnitMatch = (start: string, end: string, units: number): boolean =>
   getDurationHours(start, end) === units * HOURS_PER_UNIT;
 
+function buildGeminiContext(
+  sched: ScheduleAssignment[],
+  detectedConflicts: Conflict[]
+): GeminiScheduleContext {
+  return {
+    faculty: FACULTY_LIST.map((f) => ({
+      id: f.id,
+      name: getFacultyName(f as ReturnType<typeof getFaculty>),
+      employmentType: f.personal.employmentType,
+      maxUnits: getFacultyMaxUnits(f as ReturnType<typeof getFaculty>),
+      assignedUnits: getTotalUnits(sched, f.id),
+    })),
+ 
+    subjects: SUBJECT_LIST.map((s) => ({
+      id: s.id,
+      code: s.code,
+      name: s.name,
+      units: s.units,
+    })),
+ 
+    schedules: sched.map((s) => {
+      const f = getFaculty(s.faculty_id);
+      const sub = getSubject(s.subject_id);
+      const room = getRoom(s.room_id);
+      return {
+        id: s.id,
+        facultyName: getFacultyName(f),
+        subjectCode: sub?.code ?? s.subject_id,
+        subjectName: sub?.name ?? "",
+        section: s.section,
+        room: room?.room ?? s.room_id,
+        day: s.day,
+        startTime: s.start_time,
+        endTime: s.end_time,
+        status: s.status,
+      };
+    }),
+ 
+    detectedConflicts: detectedConflicts.map((c) => ({
+      id: c.id,
+      type: c.type,
+      label: c.label,
+      message: c.message,
+    })),
+  };
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // CONFLICT ENGINE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -108,24 +167,64 @@ function runConflictScan(sched: ScheduleAssignment[]): Conflict[] {
   const results: Conflict[] = [];
   const seen = new Set<string>();
 
+  // ── Pass 0: "Needs Faculty" soft warning for every TBD entry ────────────────
+  // GE/MATH subjects are generated with faculty_id="TBD" intentionally.
+  // Flagged as SOFT (not HARD) so they don't block finalization — they're
+  // expected to be resolved manually by the admin.
+  sched.forEach(s => {
+    if (s.faculty_id === "TBD") {
+      const sub = getSubject(s.subject_id);
+      results.push({
+        id: `tbd-fac-${s.id}`,
+        type: "SOFT",
+        label: "Needs Faculty Assignment",
+        affected: [s.id],
+        message: `${sub?.code ?? s.subject_id} (${s.section}) has no faculty assigned yet. This is expected for GE/MATH subjects — please assign a faculty member manually.`,
+        suggestion: `Open the Edit modal for this entry and select the appropriate faculty from the dropdown.`,
+        fix: null,
+        transfers: [],
+        dismissed: false,
+        applied: false,
+      });
+    }
+    // TBD time — no day/time scheduled yet
+    if (s.day === "TBD") {
+      const sub = getSubject(s.subject_id);
+      results.push({
+        id: `tbd-time-${s.id}`,
+        type: "SOFT",
+        label: "Needs Time Assignment",
+        affected: [s.id],
+        message: `${sub?.code ?? s.subject_id} for ${getFacultyName(getFaculty(s.faculty_id))} (${s.section}) has no day/time scheduled yet — added by minimum-load enforcement.`,
+        suggestion: `Open the Edit modal and set the day, start time, and end time for this entry.`,
+        fix: null,
+        transfers: [],
+        dismissed: false,
+        applied: false,
+      });
+    }
+  });
+
+  // ── Pass 1: pairwise checks (time overlaps, room double-bookings) ──────────
   sched.forEach((a, i) => {
     sched.forEach((b, j) => {
       if (j <= i) return;
       const key = [a.id, b.id].sort().join("-");
       if (seen.has(key)) return;
 
-      // Hard: time overlap same faculty
-      if (a.faculty_id === b.faculty_id && a.day === b.day && overlaps(a.start_time,a.end_time,b.start_time,b.end_time)) {
+      // Hard: time overlap — same faculty, same day, overlapping slots
+      // Skip TBD entries — they have no scheduled time yet so cannot overlap
+      if (a.faculty_id === b.faculty_id && a.faculty_id !== "TBD" && a.day === b.day && a.day !== "TBD" && overlaps(a.start_time,a.end_time,b.start_time,b.end_time)) {
         seen.add(key);
         const f=getFaculty(a.faculty_id), sA=getSubject(a.subject_id), sB=getSubject(b.subject_id);
         const fixDay = b.day === "Monday" ? "Wednesday" : "Monday";
         results.push({ id:`time-${key}`, type:"HARD", label:"Time Overlap", affected:[a.id,b.id],
           message:`${getFacultyName(f)} is double-booked on ${a.day}: ${sA?.code} (${a.start_time}–${a.end_time}) overlaps with ${sB?.code} (${b.start_time}–${b.end_time}).`,
           suggestion:`Reschedule ${sB?.code} (${b.section}) to ${fixDay} at the same time. No other conflicts found on that day.`,
-          fix:{ scheduleId:b.id, field:"day", value:fixDay }, dismissed:false, applied:false });
+          fix:{ scheduleId:b.id, field:"day", value:fixDay }, transfers:[], dismissed:false, applied:false });
       }
 
-      // Hard: room double-booking
+      // Hard: room double-booking — same room, same day, overlapping slots
       if (a.room_id === b.room_id && a.day === b.day && overlaps(a.start_time,a.end_time,b.start_time,b.end_time)) {
         seen.add(key);
         const r=getRoom(a.room_id), fA=getFaculty(a.faculty_id), fB=getFaculty(b.faculty_id);
@@ -133,48 +232,12 @@ function runConflictScan(sched: ScheduleAssignment[]): Conflict[] {
         results.push({ id:`room-${key}`, type:"HARD", label:"Room Double-Booking", affected:[a.id,b.id],
           message:`${r?.room} is double-booked on ${a.day}: assigned to both ${getFacultyName(fA)} and ${getFacultyName(fB)} at overlapping times.`,
           suggestion:`Move ${getFacultyName(fB)}'s class (${getSubject(b.subject_id)?.code}) to ${altRoom?.room ?? "another available room"}.`,
-          fix:{ scheduleId:b.id, field:"room_id", value:altRoom?.id ?? b.room_id }, dismissed:false, applied:false });
+          fix:{ scheduleId:b.id, field:"room_id", value:altRoom?.id ?? b.room_id }, transfers:[], dismissed:false, applied:false });
       }
     });
-
-    // Hard: load overload
-    const f = getFaculty(a.faculty_id);
-    if (f) {
-      const maxUnits = getFacultyMaxUnits(f);
-      const u = getTotalUnits(sched, a.faculty_id);
-      const alreadyFlagged = results.some(c=>c.label==="Load Overload"&&c.affected.includes(a.faculty_id));
-      if (u > maxUnits && !alreadyFlagged) {
-        const alt = FACULTY_LIST.find(x=>x.id!==f.id&&getTotalUnits(sched,x.id)+3<=(getFacultyMaxUnits(x)??0));
-        results.push({ id:`overload-${a.faculty_id}`, type:"HARD", label:"Load Overload", affected:sched.filter(s=>s.faculty_id===a.faculty_id).map(s=>s.id),
-          message:`${getFacultyName(f)} is assigned ${u} units — ${u-maxUnits} over their ${maxUnits}-unit max.`,
-          suggestion:`Transfer ${u-maxUnits} unit(s) from ${getFacultyName(f)} to ${getFacultyName(alt) ?? "a faculty member with available capacity"}.`,
-          fix:null, dismissed:false, applied:false });
-      }
-      // Soft: near limit
-      const nearFlagged = results.some(c=>c.label==="Near Load Limit"&&c.affected.includes(a.faculty_id));
-      if (u > maxUnits * 0.85 && u <= maxUnits && !nearFlagged) {
-        results.push({ id:`near-${a.faculty_id}`, type:"SOFT", label:"Near Load Limit", affected:[a.faculty_id],
-          message:`${getFacultyName(f)} is at ${u}/${maxUnits} units (${Math.round(u/maxUnits*100)}%). Adding more subjects risks overload.`,
-          suggestion:`Avoid assigning additional subjects to ${getFacultyName(f)} this semester.`,
-          fix:null, dismissed:false, applied:false });
-      }
-    }
   });
 
-    // Soft: uneven distribution
-    const loads = FACULTY_LIST.map(f=>({ f, u:getTotalUnits(sched,f.id), maxUnits: getFacultyMaxUnits(f) })).filter(x=>x.u>0);
-    if (loads.length > 1) {
-        const mx = Math.max(...loads.map(l=>l.u));
-        const mn = Math.min(...loads.map(l=>l.u));
-        if (mx - mn >= 6) {
-        const hi = loads.find(l=>l.u===mx)!;
-        const lo = loads.find(l=>l.u===mn)!;
-        results.push({ id:"dist-soft", type:"SOFT", label:"Uneven Load Distribution", affected:loads.map(l=>l.f.id),
-            message:`${getFacultyName(hi.f)} has ${mx} units while ${getFacultyName(lo.f)} only has ${mn} — a ${mx-mn}-unit gap.`,
-            suggestion:`Consider moving one 3-unit subject from ${getFacultyName(hi.f)} to ${getFacultyName(lo.f)} for a more balanced workload.`,
-            fix:null, dismissed:false, applied:false });
-        }
-    }
+  // ── Pass 2: per-entry hour mismatch ───────────────────────────────────────
   sched.forEach(s => {
     const sub = getSubject(s.subject_id);
     if (!sub) return;
@@ -196,13 +259,185 @@ function runConflictScan(sched: ScheduleAssignment[]): Conflict[] {
             return `${String(Math.floor(end / 60)).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`;
           })(),
         },
+        transfers: [],
         dismissed: false,
         applied: false,
       });
     }
   });
 
-  return results;
+  // ── Pass 3: per-faculty load checks (ONE pass per unique faculty) ─────────
+  // Iterating over FACULTY_LIST (not sched) guarantees exactly one conflict
+  // entry per faculty — no duplicates regardless of how many schedule entries
+  // that faculty has. Previously this ran inside the sched.forEach loop which
+  // created one overload-N entry per schedule entry, causing React key collisions.
+  FACULTY_LIST.forEach(fRaw => {
+    const f = getFaculty(fRaw.id);
+    if (!f) return;
+    const maxUnits = getFacultyMaxUnits(f);
+    // Exclude TBD-time entries from unit count — they have no confirmed schedule
+    const confirmedSched = sched.filter(s => s.day !== "TBD");
+    const u = getTotalUnits(confirmedSched, fRaw.id);
+    if (u === 0) return; // faculty has no confirmed assignments — skip overload check
+
+    // Hard: load overload
+    // ID: "overload-fac-{id}" — prefix "fac-" prevents collision when id="1"
+    // overlapping with ids like "10","11","12" via substring matching
+    if (u > maxUnits) {
+      // Build the full assigned-subject list for display
+      const myEntries = sched.filter(s => s.faculty_id === fRaw.id);
+      const assignedSubjectNames = myEntries
+        .filter((s, _, arr) => {
+          if (!s.session_group_id) return true;
+          return arr.findIndex(x => x.session_group_id === s.session_group_id) === arr.indexOf(s);
+        })
+        .map(s => {
+          const sub = getSubject(s.subject_id);
+          return sub ? `${sub.code} (${sub.units}u)` : s.subject_id;
+        });
+      const excess = u - maxUnits;
+
+      // Pick entries to transfer: sort by hours ascending so smallest go first,
+      // stop once cumulative hours covers the excess
+      // Deduplicate split sessions before sorting
+      const uniqueEntries = myEntries.filter((s, _, arr) => {
+        if (!s.session_group_id) return true;
+        return arr.findIndex(x => x.session_group_id === s.session_group_id) === arr.indexOf(s);
+      });
+      const sortedEntries = [...uniqueEntries].sort((a, b) =>
+        (getSubject(a.subject_id)?.units ?? 0) - (getSubject(b.subject_id)?.units ?? 0)
+      );
+      const toTransfer: typeof myEntries = [];
+      let covered = 0;
+      for (const entry of sortedEntries) {
+        if (covered >= excess) break;
+        toTransfer.push(entry);
+        covered += getSubject(entry.subject_id)?.units ?? 0;
+      }
+
+      // Build transfer descriptors for the one-click button
+            const transfers: ConflictTransfer[] = toTransfer.map(entry => {
+        const sub     = getSubject(entry.subject_id);
+        const subId   = entry.subject_id;
+        const subUnits = sub?.units ?? 0;
+ 
+        // Score every candidate: must specialise in this subject AND have room
+        const candidates = FACULTY_LIST
+          .filter(x => {
+            if (x.id === fRaw.id) return false;
+            const xPrefs = (x as any).preferences;
+            if (!xPrefs?.subjectSpecializations?.includes(subId)) return false;
+            const xMax  = getFacultyMaxUnits(getFaculty(x.id));
+            const xUsed = getTotalUnits(confirmedSched, x.id);
+            return xUsed + subUnits <= xMax;
+          })
+          .sort((a, b) => {
+            // Prefer most remaining capacity
+            const remA = getFacultyMaxUnits(getFaculty(a.id)) - getTotalUnits(confirmedSched, a.id);
+            const remB = getFacultyMaxUnits(getFaculty(b.id)) - getTotalUnits(confirmedSched, b.id);
+            return remB - remA;
+          });
+ 
+        const target = candidates[0];
+        return {
+          scheduleId:    entry.id,
+          subjectCode:   sub?.code ?? subId,
+          units:         subUnits,
+          toFacultyId:   target?.id ?? "",
+          toFacultyName: target
+            ? `${getFacultyName(getFaculty(target.id))} (${getFacultyMaxUnits(getFaculty(target.id)) - getTotalUnits(confirmedSched, target.id)}u remaining)`
+            : "No qualified faculty with capacity",
+        };
+      });
+
+      const toMoveNames = toTransfer.map(e => {
+        const sub = getSubject(e.subject_id);
+        return sub ? `${sub.code} (${sub.units}u)` : e.subject_id;
+      });
+
+      const bestTarget = transfers.find(t => t.toFacultyId);
+
+      results.push({ id:`overload-fac-${fRaw.id}`, type:"HARD", label:"Load Overload",
+        affected: myEntries.map(s => s.id),
+        message:`${getFacultyName(f)} is assigned ${u} units — ${u - maxUnits} over their ${maxUnits}-unit max. Subjects: [${assignedSubjectNames.join(", ")}].`,
+        suggestion: bestTarget
+          ? `Transfer ${toMoveNames.join(", ")} to qualified faculty with remaining capacity. Use the one-click Transfer buttons below — each subject is matched to a faculty who can teach it.`
+          : `No qualified faculty with sufficient capacity found. Please reassign manually.`,
+        fix: null,
+        transfers,
+        dismissed: false,
+        applied: false });
+    }
+
+    // Soft: near load limit
+    // ID: "near-fac-{id}" — same rationale
+    if (u > maxUnits * 0.85 && u <= maxUnits) {
+      results.push({ id:`near-fac-${fRaw.id}`, type:"SOFT", label:"Near Load Limit",
+        affected: [fRaw.id],
+        message:`${getFacultyName(f)} is at ${u}/${maxUnits} units (${Math.round(u/maxUnits*100)}%). Adding more subjects risks overload.`,
+        suggestion:`Avoid assigning additional subjects to ${getFacultyName(f)} this semester.`,
+        fix:null, transfers:[], dismissed:false, applied:false });
+    }
+  });
+
+  // ── Pass 4: uneven load distribution (one result for the whole schedule) ──
+  const loads = FACULTY_LIST.map(f=>({ f, u:getTotalUnits(sched,f.id), maxUnits: getFacultyMaxUnits(getFaculty(f.id)) })).filter(x=>x.u>0);
+  if (loads.length > 1) {
+    const mx = Math.max(...loads.map(l=>l.u));
+    const mn = Math.min(...loads.map(l=>l.u));
+    if (mx - mn >= 6) {
+      const hi = loads.find(l=>l.u===mx)!;
+      const lo = loads.find(l=>l.u===mn)!;
+      results.push({ id:"dist-soft", type:"SOFT", label:"Uneven Load Distribution", affected:loads.map(l=>l.f.id),
+        message:`${getFacultyName(hi.f)} has ${mx} units while ${getFacultyName(lo.f)} only has ${mn} — a ${mx-mn}-unit gap.`,
+        suggestion:`Consider moving one 3-unit subject from ${getFacultyName(hi.f)} to ${getFacultyName(lo.f)} for a more balanced workload.`,
+        fix:null, transfers:[], dismissed:false, applied:false });
+    }
+  }
+
+  // ── Pass 5: preferred-time soft warnings ─────────────────────────────────
+  // Check every confirmed assignment against the faculty's preferred time range.
+  // These are pushed FIRST among soft warnings (before uneven load, near-limit,
+  // TBD notices) so they appear at the top of the soft section in the scan modal.
+  const preferredTimeWarnings: Conflict[] = [];
+  sched.forEach(s => {
+    if (s.day === "TBD" || s.start_time === "TBD" || s.faculty_id === "TBD") return;
+    const fRaw = FACULTY_LIST.find(f => f.id === s.faculty_id);
+    if (!fRaw || !("preferences" in fRaw)) return;
+    const prefs = (fRaw as any).preferences;
+    const prefStart = prefs?.preferredTimeRange?.start;
+    const prefEnd   = prefs?.preferredTimeRange?.end;
+    if (!prefStart || !prefEnd) return;
+
+    const schedStart = toMins(s.start_time);
+    const schedEnd   = toMins(s.end_time);
+    const pStart     = toMins(prefStart);
+    const pEnd       = toMins(prefEnd);
+
+    if (schedStart < pStart || schedEnd > pEnd) {
+      const sub  = getSubject(s.subject_id);
+      const name = getFacultyName(getFaculty(s.faculty_id));
+      preferredTimeWarnings.push({
+        id: `preftime-${s.id}`,
+        type: "SOFT",
+        label: "Outside Preferred Time",
+        affected: [s.id],
+        message: `${name} prefers ${prefStart}–${prefEnd} but ${sub?.code ?? s.subject_id} ` +
+                 `(${s.section}) is scheduled ${s.start_time}–${s.end_time} on ${s.day}.`,
+        suggestion: `Reschedule ${sub?.code ?? s.subject_id} to a slot within ${name}'s preferred window (${prefStart}–${prefEnd}).`,
+        fix: null,
+        transfers: [],
+        dismissed: false,
+        applied: false,
+      });
+    }
+  });
+
+  // Merge: preferred-time warnings go FIRST in the results array so they
+  // sort to the top of the soft section in ConflictScanModal.
+  const hardResults = results.filter(r => r.type === "HARD");
+  const softResults = results.filter(r => r.type === "SOFT");
+  return [...hardResults, ...preferredTimeWarnings, ...softResults];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -509,7 +744,8 @@ function TimePickerClock({
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMPTY_FORM: Omit<ScheduleAssignment,"id"> = {
-  faculty_id:"", subject_id:"", room_id:"", day:"", start_time:"", end_time:"", section:"", status:"draft",
+  faculty_id: "", subject_id: "", room_id: "", day: "", start_time: "", end_time: "", section: "", status: "draft",
+  session_group_id: undefined
 };
 
 function ScheduleFormModal({ editing, onSave, onClose }: {
@@ -667,8 +903,15 @@ function DeleteModal({ schedule, onConfirm, onClose }: { schedule:ScheduleAssign
 // CONFLICT CARD (inside scan results modal)
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ConflictCard({ c, onApply, onDismiss }: { c:Conflict; onApply:((c:Conflict)=>void)|null; onDismiss:((id:string)=>void)|null }) {
+function ConflictCard({ c, onApply, onDismiss, onTransfer }: {
+  c: Conflict;
+  onApply: ((c: Conflict) => void) | null;
+  onDismiss: ((id: string) => void) | null;
+  onTransfer: ((t: OverloadTransfer) => void) | null;
+}) {
   const isHard = c.type === "HARD";
+  const hasTransfers = (c.transfers?.length ?? 0) > 0;
+
   return (
     <div className={`rounded-xl border p-4 mb-3 ${isHard ? "bg-red-50 border-red-200" : "bg-amber-50 border-amber-200"}`}>
       {/* Header */}
@@ -681,14 +924,45 @@ function ConflictCard({ c, onApply, onDismiss }: { c:Conflict; onApply:((c:Confl
           </div>
           <p className="text-sm text-gray-700 leading-relaxed mb-3">{c.message}</p>
 
-          {/* AI suggestion box */}
-          <div className="bg-white/70 border border-gray-200 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Sparkles size={11} className="text-violet-600"/>
-              <span className="text-[11px] font-bold text-violet-700 uppercase tracking-wide">AI Suggested Fix</span>
+          {/* One-click transfer panel for overload conflicts */}
+          {hasTransfers && onTransfer ? (
+            <div className="bg-white/80 border border-red-200 rounded-lg p-3 space-y-2">
+              <div className="flex items-center gap-1.5 mb-2">
+                <ShieldCheck size={11} className="text-red-600"/>
+                <span className="text-[11px] font-bold text-red-700 uppercase tracking-wide">One-Click Transfers</span>
+                <span className="ml-auto text-[10px] text-gray-400">Click a row to reassign that subject</span>
+              </div>
+              {c.transfers!.map(t => (
+                <div key={t.scheduleId} className="flex items-center justify-between gap-3 bg-gray-50 rounded-lg px-3 py-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-800">{t.subjectCode}
+                      <span className="ml-1.5 text-[10px] font-normal text-gray-400">({t.units}u)</span>
+                    </p>
+                    <p className="text-[10px] text-gray-500 truncate">→ {t.toFacultyName}</p>
+                  </div>
+                  <button
+                    onClick={() => onTransfer(t)}
+                    disabled={!t.toFacultyId}
+                    className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors
+                      ${t.toFacultyId
+                        ? "bg-primary text-white hover:bg-primary/90"
+                        : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}
+                  >
+                    <ShieldCheck size={11}/> Transfer
+                  </button>
+                </div>
+              ))}
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed">{c.suggestion}</p>
-          </div>
+          ) : (
+            /* AI suggestion box for non-transfer conflicts */
+            <div className="bg-white/70 border border-gray-200 rounded-lg p-3">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Sparkles size={11} className="text-violet-600"/>
+                <span className="text-[11px] font-bold text-violet-700 uppercase tracking-wide">AI Suggested Fix</span>
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed">{c.suggestion}</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -714,13 +988,17 @@ function ConflictCard({ c, onApply, onDismiss }: { c:Conflict; onApply:((c:Confl
 // AI CONFLICT SCAN RESULTS MODAL
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ConflictScanModal({ initialConflicts, onApplyFix, onClose, onFinalize }: {
+function ConflictScanModal({ initialConflicts, onApplyFix, onApplyTransfers, onClose, onFinalize }: {
   initialConflicts: Conflict[];
   onApplyFix: (fix: Conflict["fix"]) => void;
+  onApplyTransfers: (transfers: ConflictTransfer[]) => void;
   onClose: () => void;
   onFinalize: () => void;
 }) {
   const [conflicts, setConflicts] = useState<Conflict[]>(initialConflicts);
+  useEffect(() => {
+    setConflicts(initialConflicts);
+  }, [initialConflicts]);
   const hard     = conflicts.filter(c=>c.type==="HARD"&&!c.dismissed&&!c.applied);
   const soft     = conflicts.filter(c=>c.type==="SOFT"&&!c.dismissed&&!c.applied);
   const resolved = conflicts.filter(c=>c.dismissed||c.applied);
@@ -728,6 +1006,16 @@ function ConflictScanModal({ initialConflicts, onApplyFix, onClose, onFinalize }
 
   const handleApply   = (c: Conflict) => { onApplyFix(c.fix); setConflicts(p=>p.map(x=>x.id===c.id?{...x,applied:true}:x)); };
   const handleDismiss = (id: string)  => setConflicts(p=>p.map(c=>c.id===id?{...c,dismissed:true}:c));
+  const handleTransfer = (conflictId: string, t: ConflictTransfer) => {
+    // Apply a single transfer immediately
+    onApplyTransfers([t]);
+    // Remove this transfer from the conflict's list; mark applied when all done
+    setConflicts(p => p.map(c => {
+      if (c.id !== conflictId) return c;
+      const remaining = c.transfers.filter(x => x.scheduleId !== t.scheduleId);
+      return { ...c, transfers: remaining, applied: remaining.length === 0 };
+    }));
+  };
 
   return (
     <Modal title="AI Conflict Scan Results" onClose={onClose} maxWidth="max-w-2xl">
@@ -753,7 +1041,14 @@ function ConflictScanModal({ initialConflicts, onApplyFix, onClose, onFinalize }
           <p className="text-xs font-bold text-red-600 flex items-center gap-1.5 mb-3">
             <AlertTriangle size={13}/> Hard Conflicts — must be resolved before finalizing
           </p>
-          {hard.map(c=><ConflictCard key={c.id} c={c} onApply={c.fix ? handleApply : null} onDismiss={null}/>)}
+          {hard.map(c=>(
+            <ConflictCard
+              key={c.id} c={c}
+              onApply={c.fix ? handleApply : null}
+              onDismiss={null}
+              onTransfer={c.transfers?.length ? (t) => handleTransfer(c.id, t) : null}
+            />
+          ))}
         </div>
       )}
 
@@ -763,7 +1058,14 @@ function ConflictScanModal({ initialConflicts, onApplyFix, onClose, onFinalize }
           <p className="text-xs font-bold text-amber-600 flex items-center gap-1.5 mb-3">
             <AlertTriangle size={13}/> Soft Warnings — can be dismissed
           </p>
-          {soft.map(c=><ConflictCard key={c.id} c={c} onApply={c.fix ? handleApply : null} onDismiss={handleDismiss}/>)}
+          {soft.map(c=>(
+            <ConflictCard
+              key={c.id} c={c}
+              onApply={c.fix ? handleApply : null}
+              onDismiss={handleDismiss}
+              onTransfer={null}
+            />
+          ))}
         </div>
       )}
 
@@ -816,15 +1118,27 @@ function CardView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; onEdi
             {/* Colored top accent — dynamically matched to faculty color */}
             <div className={`h-1.5 ${getAvatarColor(f)}`}/>
             <div className="p-4">
-              {/* Faculty row */}
+              {/* Faculty row — TBD entries show amber "Needs Faculty" badge */}
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <Avatar initials={getFacultyInitials(f)} colorClass={getAvatarColor(f)} size="sm"/>
-                  <div>
-                    <p className="text-xs font-bold text-gray-900">{getFacultyName(f)}</p>
-                    <p className="text-[11px] text-gray-400">{f?.personal.designation}</p>
+                {s.faculty_id === "TBD" ? (
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                      <Users size={13} className="text-amber-600"/>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-amber-700">Needs Faculty</p>
+                      <p className="text-[11px] text-amber-500">Click Edit to assign</p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-2.5">
+                    <Avatar initials={getFacultyInitials(f)} colorClass={getAvatarColor(f)} size="sm"/>
+                    <div>
+                      <p className="text-xs font-bold text-gray-900">{getFacultyName(f)}</p>
+                      <p className="text-[11px] text-gray-400">{f?.personal.designation}</p>
+                    </div>
+                  </div>
+                )}
                 <StatusBadge status={s.status}/>
               </div>
 
@@ -835,18 +1149,18 @@ function CardView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; onEdi
                 <p className="text-[11px] text-gray-400 mt-1">{sub?.units} units · {s.section}</p>
               </div>
 
-              {/* Info grid */}
+              {/* Info grid — TBD time shows amber instead of gray */}
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {[["Day", s.day], ["Time", `${s.start_time}–${s.end_time}`]].map(([k,v])=>(
-                  <div key={k} className="bg-gray-50 rounded-lg p-2">
+                {([["Day", s.day], ["Time", s.start_time === "TBD" ? "TBD" : `${s.start_time}–${s.end_time}`]] as [string,string][]).map(([k,v])=>(
+                  <div key={k} className={`rounded-lg p-2 ${v==="TBD" ? "bg-amber-50" : "bg-gray-50"}`}>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{k}</p>
-                    <p className="text-xs font-semibold text-gray-700 mt-0.5">{v}</p>
+                    <p className={`text-xs font-semibold mt-0.5 ${v==="TBD" ? "text-amber-600 italic" : "text-gray-700"}`}>{v}</p>
                   </div>
                 ))}
                 <div className="col-span-2 bg-gray-50 rounded-lg p-2">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Room</p>
-                      <p className="text-xs font-semibold text-gray-700 mt-0.5">{r?.room}</p>
-                    </div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Room</p>
+                  <p className="text-xs font-semibold text-gray-700 mt-0.5">{r?.room ?? "—"}</p>
+                </div>
               </div>
 
               {/* Actions */}
@@ -873,9 +1187,14 @@ function CardView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; onEdi
 // ✏️ EDIT — timetable slot height in pixels and start hour
 const SLOT_H  = 56;
 const START_H = 7; // 07:00
-const TIME_LABELS = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+const TIME_LABELS = ["07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00", "18:00", "19:00", "20:00"];
+
+const SNAP_MINS = 30; 
+const PIXELS_PER_MIN = SLOT_H / 60
 
 function TimetableView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; onEdit:(s:ScheduleAssignment)=>void; onDelete:(s:ScheduleAssignment)=>void }) {
+  const [ghost, setGhost] = useState<{ day: string; start: string; end: string } | null>(null);
+  const [draggedItem, setDraggedItem] = useState<ScheduleAssignment | null>(null);
   const byDay = useMemo(()=>{
     const m: Record<string,ScheduleAssignment[]> = {};
     DAYS.forEach(d=>{ m[d]=[]; });
@@ -883,7 +1202,41 @@ function TimetableView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; 
     return m;
   },[data]);
 
-  const top = (t:string) => (toMins(t) - START_H*60) / 60 * SLOT_H;
+  const handleDragStart = (e: React.DragEvent, s: ScheduleAssignment) => {
+    setDraggedItem(s);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, day: string) => {
+    e.preventDefault();
+    if (!draggedItem) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+    
+    // Snapping logic to solve "Challenge: Snapping"
+    const rawMins = (mouseY / SLOT_H) * 60; 
+    const snappedMins = Math.round(rawMins / SNAP_MINS) * SNAP_MINS;
+    
+    const startTotalMins = (START_H * 60) + snappedMins;
+    const duration = toMins(draggedItem.end_time) - toMins(draggedItem.start_time);
+    
+    const toHHMM = (m: number) => `${Math.floor(m/60).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`;
+    const newStart = toHHMM(startTotalMins);
+    const newEnd = toHHMM(startTotalMins + duration);
+
+    if (ghost?.day !== day || ghost?.start !== newStart) {
+      setGhost({ day, start: newStart, end: newEnd });
+    }
+  };
+
+  const handleDrop = () => {
+    if (!ghost || !draggedItem) return;
+    onEdit({ ...draggedItem, day: ghost.day, start_time: ghost.start, end_time: ghost.end });
+    setGhost(null);
+    setDraggedItem(null);
+  };
+
   const height = (s:string, e:string) => Math.max((toMins(e)-toMins(s))/60*SLOT_H - 4, 28);
 
   return (
@@ -907,28 +1260,44 @@ function TimetableView({ data, onEdit, onDelete }: { data:ScheduleAssignment[]; 
 
         {/* Day columns */}
         {DAYS.map(day=>(
-          <div key={day} className="relative border-r border-gray-100">
-            {/* Background slot rows */}
+          <div 
+            key={day} 
+            className="relative border-r border-gray-100"
+            onDragOver={(e) => handleDragOver(e, day)} // Add this
+            onDrop={handleDrop}                       // Add this
+            onDragLeave={() => setGhost(null)}        // Add this
+          >
             {TIME_LABELS.map((t,i)=>(
               <div key={t} style={{ height:SLOT_H }} className={`border-b ${i%2===0?"border-gray-100":"border-dashed border-gray-50"} ${i%2!==0?"bg-gray-50/40":""}`}/>
             ))}
+            {/* GHOST PREVIEW (Challenge: Ghosting Effect) */}
+            {ghost && ghost.day === day && (
+              <div 
+                className="absolute left-1 right-1 rounded-lg border-2 border-dashed border-primary bg-primary/5 z-0 pointer-events-none"
+                style={{ 
+                  top: (toMins(ghost.start) - (START_H * 60)) * PIXELS_PER_MIN + 2,
+                  height: (toMins(ghost.end) - toMins(ghost.start)) * PIXELS_PER_MIN - 4 
+                }}
+              />
+            )}
 
             {/* Assignment blocks */}
             {byDay[day].map(s=>{
-              const f=getFaculty(s.faculty_id), sub=getSubject(s.subject_id);
+              const f=getFaculty(s.faculty_id), sub=getSubject(s.subject_id), r = getRoom(s.room_id);
               const blockH = height(s.start_time, s.end_time);
               return (
-                <div key={s.id}
-                  // ✏️ EDIT — block colors use inline opacity trickery since faculty colors are Tailwind classes
-                  // If you switch to hex values in Faculty, use: background:`${f.color}18`, borderLeft:`3px solid ${f.color}`
-                  className="absolute left-1 right-1 rounded-lg px-2 py-1 overflow-hidden cursor-pointer group border-l-2 border-l-primary bg-[#FFF3F3] hover:bg-[#FFE8E8] transition-colors"
-                  onMouseEnter={e=>(e.currentTarget.style.zIndex="5")}
-                  onMouseLeave={e=>(e.currentTarget.style.zIndex="2")}
-                  style={{ top: top(s.start_time)+2, height:blockH, zIndex:2 }}>
+                  <div key={s.id}
+                    draggable                             // Add this
+                    onDragStart={(e) => handleDragStart(e, s)} // Add this
+                    className={`absolute left-1 right-1 rounded-lg px-2 py-1 overflow-hidden cursor-pointer group border-l-2 border-l-primary bg-[#FFF3F3] hover:bg-[#FFE8E8] transition-colors ${draggedItem?.id === s.id ? 'opacity-20' : ''}`} // Add opacity
+                    style={{ 
+                      top: (toMins(s.start_time) - START_H*60) * PIXELS_PER_MIN + 2, 
+                      height: blockH - 4,
+                    }}>
                   <p className="text-[10px] font-black text-primary truncate">{sub?.code}</p>
-                  {blockH > 38 && <p className="text-[9px] text-gray-600 truncate">{getFacultyInitials(f)} · {s.section}</p>}
-                  {blockH > 56 && <p className="text-[9px] text-gray-400">{s.start_time}–{s.end_time}</p>}
-                  {blockH > 72 && <p className="text-[9px] text-gray-400 truncate">📍 {getRoom(s.room_id)?.room ?? "No room"}</p>}
+                  {blockH > 38 && <p className="text-[10px] text-gray-600 truncate">{getFacultyInitials(f)} · {s.section}</p>}
+                  {blockH > 56 && <p className="text-[10px] text-gray-400">{s.start_time}–{s.end_time}</p>}
+                  {blockH > 72 && <p className="text-[10px] text-gray-400 truncate">📍 {r?.room ?? "No room"}</p>}
                   {blockH > 74 && (
                     <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={e=>{e.stopPropagation();onEdit(s);}} className="flex-1 bg-primary text-white text-[9px] font-bold rounded py-0.5">Edit</button>
@@ -1029,29 +1398,57 @@ function ScheduleStatCard({ label, value, icon, sub }: { label:string; value:num
 
 export default function ManageSchedule() {
   // ── State ──────────────────────────────────────────────────────────────────
-  const [schedules,  setSchedules]  = useState<ScheduleAssignment[]>([]);
-  const [view,       setView]       = useState<ViewMode>("card");
-  const [search,     setSearch]     = useState("");
-  const [filterDay,  setFilterDay]  = useState("All");
-  const [filterFac,  setFilterFac]  = useState("All");
-  const [modal,      setModal]      = useState<"add"|"edit"|"delete"|"scan"|null>(null);
-  const [selected,   setSelected]   = useState<ScheduleAssignment|null>(null);
-  const [conflicts,  setConflicts]  = useState<Conflict[]>([]);
-  const [scanning,   setScanning]   = useState(false);
-  const [scanned,    setScanned]    = useState(false);
+  const [schedules,      setSchedules]      = useState<ScheduleAssignment[]>([]);
+  const [view,           setView]           = useState<ViewMode>("card");
+  const [search,         setSearch]         = useState("");
+  const [filterDay,      setFilterDay]      = useState("All");
+  const [filterFac,      setFilterFac]      = useState("All");
+  const [filterProgram,  setFilterProgram]  = useState("All");   // FIX 5
+  const [filterRoom,     setFilterRoom]     = useState("All");   // FIX 6
+  const [modal,          setModal]          = useState<"add"|"edit"|"delete"|"scan"|"reasoning"|null>(null);
+  const [selected,       setSelected]       = useState<ScheduleAssignment|null>(null);
+  const [conflicts,      setConflicts]      = useState<Conflict[]>([]);
+  const [scanning,       setScanning]       = useState(false);
+  const [scanned,        setScanned]        = useState(false);
+  // FIX 4: persist last generation result so reasoning modal can be reopened
+  const [lastReasoning,  setLastReasoning]  = useState<{
+    perProgram: Record<string, string>;
+    utilization: FacultyUtilization[];
+    missingEntries: MissingEntry[];
+    wasFixed: boolean;
+    apiCalls: number;
+    sem: 1 | 2;
+    schoolYear: string;
+  } | null>(null);
+  // Active school-year + semester context for generation
+  const [activeSem, setActiveSem] = useState<{ schoolYear: string; sem: 1 | 2 }>({
+    schoolYear: "2024-2025",
+    sem: 1,
+  });
 
   // ── Derived values ─────────────────────────────────────────────────────────
   const drafts    = schedules.filter(s=>s.status==="draft").length;
   const finalized = schedules.filter(s=>s.status==="finalized").length;
 
+  // Program filter uses the SECTION label as ground truth (e.g. "BSCS 1-A").
+  // Using subject.programs[] was wrong — math101 belongs to all 3 programs so
+  // a BSCS math101 row was passing the BSIT filter too. The section string
+  // always unambiguously identifies which program the row belongs to.
+  // Room filter uses room_id for exact match.
   const filtered = useMemo(()=>schedules.filter(s=>{
     const f=getFaculty(s.faculty_id), sub=getSubject(s.subject_id), q=search.toLowerCase();
+    // Extract the program prefix from the section label: "BSCS 1-A" → "BSCS"
+    const sectionProgram = s.section.trim().split(" ")[0].toUpperCase();
+    const programMatch = filterProgram === "All" || sectionProgram === filterProgram;
+    const roomMatch    = filterRoom    === "All" || s.room_id === filterRoom;
     return (
       (!search || getFacultyName(f).toLowerCase().includes(q) || sub?.name.toLowerCase().includes(q) || sub?.code.toLowerCase().includes(q) || s.section.toLowerCase().includes(q)) &&
       (filterDay==="All" || s.day===filterDay) &&
-      (filterFac==="All" || s.faculty_id===filterFac)
+      (filterFac==="All" || s.faculty_id===filterFac) &&
+      programMatch &&
+      roomMatch
     );
-  }), [schedules, search, filterDay, filterFac]);
+  }), [schedules, search, filterDay, filterFac, filterProgram, filterRoom]);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const openEdit   = (s:ScheduleAssignment) => { setSelected(s); setModal("edit");   };
@@ -1073,7 +1470,26 @@ export default function ManageSchedule() {
 
   const handleApplyFix = (fix: Conflict["fix"]) => {
     if (!fix) return;
-    setSchedules(p=>p.map(s=>s.id===fix.scheduleId ? { ...s, [fix.field]:fix.value } : s));
+    setSchedules(p => p.map(s => s.id === fix.scheduleId ? { ...s, [fix.field]: fix.value } : s));
+    setConflicts(p => p.map(c => c.fix?.scheduleId === fix.scheduleId ? { ...c, applied: true } : c));
+    setScanned(false);
+  };
+
+  // One-click transfer: reassign all listed schedule entries to the target faculty
+  const handleApplyTransfers = (transfers: ConflictTransfer[]) => {
+    if (!transfers.length) return;
+    const transferredIds = new Set(transfers.map(t => t.scheduleId));
+    setSchedules(prev =>
+      prev.map(s => {
+        const t = transfers.find(tr => tr.scheduleId === s.id);
+        return t ? { ...s, faculty_id: t.toFacultyId } : s;
+      })
+    );
+    setConflicts(prev => prev.map(c => {
+      const remaining = c.transfers.filter(t => !transferredIds.has(t.scheduleId));
+      return remaining.length === c.transfers.length ? c : { ...c, transfers: remaining, applied: remaining.length === 0 };
+    }));
+    setScanned(false);
   };
 
   const handleFinalize = () => {
@@ -1082,19 +1498,78 @@ export default function ManageSchedule() {
     closeModal();
   };
 
+
+
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    try {
+      const result = await generateSchedule({ sem: activeSem.sem });
+      setSchedules(result.schedule);
+      setScanned(false);
+      // FIX 4: save reasoning so the modal can be opened/reopened at any time
+      setLastReasoning({
+        perProgram:     result.perProgramReasoning,
+        utilization:    result.facultyUtilization,
+        missingEntries: result.missingEntries,
+        wasFixed:       result.wasFixed,
+        apiCalls:       result.apiCallsUsed,
+        sem:            activeSem.sem,
+        schoolYear:     activeSem.schoolYear,
+      });
+      // Auto-open reasoning modal so admin sees it immediately after generation
+      setModal("reasoning");
+      console.log(`[DeptFlow] Schedule generated in ${result.apiCallsUsed} API call(s).`);
+    } catch (err) {
+      console.error("[DeptFlow] Schedule generation failed:", err);
+      alert("Schedule generation failed. Check the console for details.");
+    } finally {
+      setGenerating(false);
+    }
+  };
   // ✏️ EDIT — replace the setTimeout with your actual Supabase + Gemini API call
-  const runScan = () => {
+
+// REPLACE WITH:
+  const runScan = async () => {
     setScanning(true);
     setScanned(false);
-    setTimeout(()=>{
-      const found = runConflictScan(schedules);
-      setConflicts(found);
-      setScanning(false);
-      setScanned(true);
-      setModal("scan");
-    }, 1500);
-  };
 
+    // Step 1 — Local scan is instant (~5ms). Show results immediately.
+    const localConflicts = runConflictScan(schedules);
+    setConflicts(localConflicts);
+    setScanning(false);
+    setScanned(true);
+    setModal("scan");          // ← Modal opens NOW with local suggestions
+
+    // Step 2 — Enrich in the background. Modal is already open.
+    // When Gemini responds, suggestions update in place silently.
+    if (localConflicts.length === 0) return;
+
+    try {
+      const context = buildGeminiContext(schedules, localConflicts);
+      const geminiSuggestions = await enrichConflictsWithGemini(context);
+      if (geminiSuggestions.length > 0) {
+        setConflicts(prev =>
+          prev.map(conflict => {
+            const match = geminiSuggestions.find(g => g.conflictId === conflict.id);
+            return match
+              ? {
+                  ...conflict,
+                  suggestion: match.suggestion,
+                  ...(match.summaryNote && {
+                    message: `${conflict.message} — ${match.summaryNote}`,
+                  }),
+                }
+              : conflict;
+          })
+        );
+      }
+    } catch (err) {
+      // Enrichment failed — local suggestions already showing, nothing breaks
+      console.error("[DeptFlow] Gemini enrichment failed, local suggestions retained:", err);
+    }
+  };
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="p-8 space-y-6 font-lexend">
@@ -1107,21 +1582,71 @@ export default function ManageSchedule() {
             Draft all assignments freely — then run one AI scan to detect and fix all conflicts at once.
           </p>
         </div>
-        <div className="flex gap-3 shrink-0">
-          {/* AI Scan button */}
-          <button onClick={runScan} disabled={scanning}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all
-              ${scanning ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                         : "bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-200"}`}>
-            <Sparkles size={15}/>
-            {scanning ? "Scanning..." : "Run AI Conflict Scan"}
-          </button>
+        <div className="flex flex-col items-end gap-2 shrink-0">
 
-          {/* Add assignment button — matches primary style from AdminDashboard */}
-          <button onClick={()=>setModal("add")}
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-colors">
-            <Plus size={15}/> Add Assignment
-          </button>
+          {/* ── Semester context selector (FIX 5) ── */}
+          <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-1.5">
+            <CalendarDays size={14} className="text-indigo-500 shrink-0"/>
+            <span className="text-xs font-semibold text-indigo-700 shrink-0">Generating for:</span>
+            <select
+              className="text-xs font-bold text-indigo-800 bg-transparent border-none outline-none cursor-pointer"
+              value={activeSem.schoolYear}
+              onChange={e => setActiveSem(p => ({ ...p, schoolYear: e.target.value }))}
+            >
+              {["2023-2024","2024-2025","2025-2026"].map(sy=>(
+                <option key={sy} value={sy}>{sy}</option>
+              ))}
+            </select>
+            <span className="text-indigo-400">·</span>
+            <select
+              className="text-xs font-bold text-indigo-800 bg-transparent border-none outline-none cursor-pointer"
+              value={activeSem.sem}
+              onChange={e => setActiveSem(p => ({ ...p, sem: Number(e.target.value) as 1|2 }))}
+            >
+              <option value={1}>1st Semester</option>
+              <option value={2}>2nd Semester</option>
+            </select>
+          </div>
+
+          {/* ── Action buttons ── */}
+          <div className="flex gap-2">
+            {/* FIX 4: View Reasoning button — only shown when a result exists */}
+            {lastReasoning && (
+              <button
+                onClick={() => setModal("reasoning")}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
+              >
+                <Info size={15}/> View Reasoning
+              </button>
+            )}
+            <button
+              onClick={handleGenerate}
+              disabled={generating || scanning}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all
+                ${generating || scanning
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200"}`}
+            >
+              <Sparkles size={15}/>
+              {generating ? "Generating..." : "Generate Schedule"}
+            </button>
+            <button
+              onClick={runScan}
+              disabled={scanning || generating}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all
+                ${scanning ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-200"}`}
+            >
+              <Sparkles size={15}/>
+              {scanning ? "Scanning..." : "Run AI Conflict Scan"}
+            </button>
+            <button
+              onClick={() => setModal("add")}
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold shadow-lg shadow-primary/20 transition-colors"
+            >
+              <Plus size={15}/> Add Assignment
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1191,29 +1716,45 @@ export default function ManageSchedule() {
               </div>
             </div>
 
-            {/* Filter chips */}
+            {/* Filter chips — FIX 5 (program filter) + FIX 6 (room filter) */}
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 flex-1 min-w-[140px]">
+              {/* Day */}
+              <div className="flex items-center gap-2 flex-1 min-w-[130px]">
                 <span className="text-xs text-gray-400 shrink-0">Day:</span>
-                <select
-                  className={inputCls}
-                  value={filterDay}
-                  onChange={e => setFilterDay(e.target.value)}
-                >
+                <select className={inputCls} value={filterDay} onChange={e=>setFilterDay(e.target.value)}>
                   <option value="All">All Days</option>
-                  {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
+                  {DAYS.map(d=><option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
-              <div className="flex items-center gap-2 flex-1 min-w-[180px]">
+              {/* Faculty */}
+              <div className="flex items-center gap-2 flex-1 min-w-[170px]">
                 <span className="text-xs text-gray-400 shrink-0">Faculty:</span>
-                <select
-                  className={inputCls}
-                  value={filterFac}
-                  onChange={e => setFilterFac(e.target.value)}
-                >
+                <select className={inputCls} value={filterFac} onChange={e=>setFilterFac(e.target.value)}>
                   <option value="All">All Faculty</option>
-                  {FACULTY_LIST.map(f => (
+                  {FACULTY_LIST.map(f=>(
                     <option key={f.id} value={f.id}>{getFacultyName(f as ReturnType<typeof getFaculty>)}</option>
+                  ))}
+                </select>
+              </div>
+              {/* Program — FIX 5 */}
+              <div className="flex items-center gap-2 flex-1 min-w-[130px]">
+                <span className="text-xs text-gray-400 shrink-0">Program:</span>
+                <select className={inputCls} value={filterProgram} onChange={e=>setFilterProgram(e.target.value)}>
+                  <option value="All">All Programs</option>
+                  <option value="BSCS">BSCS</option>
+                  <option value="BSIT">BSIT</option>
+                  <option value="BSIS">BSIS</option>
+                </select>
+              </div>
+              {/* Room — FIX 6 */}
+              <div className="flex items-center gap-2 flex-1 min-w-[150px]">
+                <span className="text-xs text-gray-400 shrink-0">
+                  <DoorOpen size={13} className="inline mr-1 text-gray-400"/>Room:
+                </span>
+                <select className={inputCls} value={filterRoom} onChange={e=>setFilterRoom(e.target.value)}>
+                  <option value="All">All Rooms</option>
+                  {ROOM_LIST.map(r=>(
+                    <option key={r.id} value={r.id}>{(r as any).room}</option>
                   ))}
                 </select>
               </div>
@@ -1254,10 +1795,148 @@ export default function ManageSchedule() {
         <ConflictScanModal
           initialConflicts={conflicts}
           onApplyFix={handleApplyFix}
+          onApplyTransfers={handleApplyTransfers}
           onClose={closeModal}
           onFinalize={handleFinalize}
         />
       )}
+      {/* FIX 4: Reasoning modal — reopenable any time via "View Reasoning" button */}
+      {modal==="reasoning" && lastReasoning && (
+        <ReasoningModal data={lastReasoning} onClose={closeModal}/>
+      )}
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIX 4: REASONING MODAL
+// Shows per-program Gemini reasoning + full faculty utilization table.
+// Opened automatically after generation and re-openable via "View Reasoning".
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ReasoningModal({ data, onClose }: {
+  data: {
+    perProgram: Record<string, string>;
+    utilization: FacultyUtilization[];
+    missingEntries: MissingEntry[];
+    wasFixed: boolean;
+    apiCalls: number;
+    sem: 1 | 2;
+    schoolYear: string;
+  };
+  onClose: () => void;
+}) {
+  const semLabel = data.sem === 1 ? "1st Semester" : "2nd Semester";
+  const programs = ["BSCS", "BSIT", "BSIS"];
+
+  return (
+    <Modal title="AI Scheduling Reasoning" onClose={onClose} maxWidth="max-w-3xl">
+      {/* Context pill */}
+      <div className="flex items-center gap-2 mb-5 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+        <CalendarDays size={15} className="text-indigo-500 shrink-0"/>
+        <span className="text-xs font-semibold text-indigo-700">
+          {data.schoolYear} · {semLabel}
+        </span>
+        <span className="ml-auto text-xs text-indigo-500">
+          {data.apiCalls} API call{data.apiCalls!==1?"s":""} · {data.wasFixed ? "Generated + fixed" : "Generated clean"}
+        </span>
+      </div>
+
+      {/* Per-program reasoning */}
+      <div className="space-y-3 mb-6">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">AI Reasoning per Program</p>
+        {programs.map(prog => {
+          const text = data.perProgram[prog];
+          if (!text) return null;
+          return (
+            <div key={prog} className="p-3 bg-gray-50 border border-gray-100 rounded-xl">
+              <p className="text-xs font-bold text-gray-700 mb-1">{prog}</p>
+              <p className="text-sm text-gray-600 leading-relaxed">{text}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Curriculum completeness panel — shown prominently when entries are missing */}
+      {data.missingEntries.length > 0 && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle size={15} className="text-red-600 shrink-0"/>
+            <p className="text-xs font-bold text-red-700 uppercase tracking-wider">
+              Incomplete Schedule — {data.missingEntries.length} subject{data.missingEntries.length !== 1 ? "s" : ""} missing
+            </p>
+          </div>
+          <p className="text-xs text-red-600 mb-3 leading-relaxed">
+            The following subjects are required by the curriculum but have no schedule entry.
+            Run <strong>Generate Schedule</strong> again or add them manually.
+          </p>
+          <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {data.missingEntries.map((m, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white border border-red-100 rounded-lg px-3 py-2">
+                <span className="text-[10px] font-bold text-red-400 w-12 shrink-0">{m.program}</span>
+                <span className="text-xs font-bold text-red-800">{m.subjectCode}</span>
+                <span className="text-[11px] text-red-500 ml-auto">{m.section}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.missingEntries.length === 0 && (
+        <div className="mb-6 flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl">
+          <CheckCircle2 size={14} className="text-green-600 shrink-0"/>
+          <p className="text-xs font-semibold text-green-700">All curriculum subjects have schedule entries ✓</p>
+        </div>
+      )}
+
+      {/* Faculty utilization table */}
+      <div className="space-y-2">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Faculty Utilization</p>
+        <div className="border border-gray-100 rounded-xl overflow-hidden">
+          <table className="w-full text-xs">
+            <thead className="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th className="text-left px-3 py-2 font-semibold text-gray-500">Faculty</th>
+                <th className="text-left px-3 py-2 font-semibold text-gray-500">Type</th>
+                <th className="text-left px-3 py-2 font-semibold text-gray-500">Units</th>
+                <th className="text-left px-3 py-2 font-semibold text-gray-500">Load</th>
+                <th className="text-left px-3 py-2 font-semibold text-gray-500">Subjects</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {data.utilization.map(u => {
+                const fData = FACULTY_LIST.find(f => f.id === u.facultyId);
+                const empType = fData?.personal.employmentType ?? "";
+                const barColor = u.utilization >= 90 ? "bg-red-400"
+                               : u.utilization >= 70 ? "bg-amber-400"
+                               : u.utilization >= 30 ? "bg-green-400"
+                               : "bg-gray-200";
+                return (
+                  <tr key={u.facultyId} className={u.assignedUnits === 0 ? "bg-gray-50 opacity-60" : "bg-white"}>
+                    <td className="px-3 py-2 font-semibold text-gray-800">{u.name}</td>
+                    <td className="px-3 py-2 text-gray-500">{empType}</td>
+                    <td className="px-3 py-2 text-gray-700">{u.assignedUnits}/{u.maxUnits}u</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full`} style={{width:`${Math.min(u.utilization,100)}%`}}/>
+                        </div>
+                        <span className="text-gray-500">{u.utilization}%</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-gray-500 max-w-[200px]">
+                      {u.assignedUnits === 0 && u.notUsedReason
+                        ? <span className="italic text-amber-600">{u.notUsedReason}</span>
+                        : u.subjects.join(", ") || "—"
+                      }
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Modal>
   );
 }

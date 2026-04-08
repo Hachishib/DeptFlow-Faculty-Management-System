@@ -12,86 +12,32 @@
       "dateHired": "2018-06-01",
       "status": "Active"
     },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs101", "cs102", "cs103", "cs201", "cs202",
+        "cs205", "cs206", "it102", "it103"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Wednesday", "Friday"],
+      "unavailableTimeSlots": [],
+      "preferredTimeRange": { "start": "08:00", "end": "17:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "CS programming core. Strong in OOP, data structures, and database systems. Prefers MWF."
+    },
     "education": [
-      {
-        "id": "1",
-        "degree": "Doctor of Information Technology",
-        "school": "PLM",
-        "year": "2021"
-      },
-      {
-        "id": "2",
-        "degree": "Master of Science in IT",
-        "school": "TUP",
-        "year": "2016"
-      },
-      {
-        "id": "3",
-        "degree": "BS Computer Science",
-        "school": "TUP",
-        "year": "2007"
-      }
+      { "id": "1", "degree": "Doctor of Information Technology", "school": "PLM", "year": "2021" },
+      { "id": "2", "degree": "Master of Science in IT", "school": "TUP", "year": "2016" }
     ],
     "credentials": [
-      {
-        "id": "1",
-        "type": "license",
-        "licenseType": "Civil Service Eligibility",
-        "issuingAuthority": "Civil Service Commission",
-        "yearObtained": "2008"
-      },
-      {
-        "id": "2",
-        "type": "license",
-        "licenseType": "PRC License — Computer Science",
-        "issuingAuthority": "Professional Regulation Commission",
-        "yearObtained": "2018"
-      }
+      { "id": "1", "type": "license", "licenseType": "PRC License — Computer Science", "issuingAuthority": "PRC", "yearObtained": "2018" }
     ],
     "research": [
-      {
-        "id": "1",
-        "title": "AI-Based Faculty Workload Prediction",
-        "journal": "Int. Journal of Computing",
-        "year": "2023",
-        "type": "Publication"
-      }
+      { "id": "1", "title": "AI-Based Faculty Workload Prediction", "journal": "Int. Journal of Computing", "year": "2023", "type": "Publication" }
     ],
-    "schedule": [
-      {
-        "id": "1",
-        "subjectCode": "CS 211",
-        "subject": "Data Structures",
-        "section": "BSCS 2-A",
-        "room": "Lab 1",
-        "days": ["Monday", "Wednesday", "Friday"],
-        "startTime": "8:00 AM",
-        "endTime": "9:30 AM",
-        "color": "blue"
-      },
-      {
-        "id": "2",
-        "subjectCode": "CS 401",
-        "subject": "Software Engineering",
-        "section": "BSCS 4-A",
-        "room": "Lab 3",
-        "days": ["Tuesday", "Thursday"],
-        "startTime": "10:00 AM",
-        "endTime": "12:00 PM",
-        "color": "green"
-      },
-      {
-        "id": "3",
-        "subjectCode": "CS 311",
-        "subject": "Database Systems",
-        "section": "BSCS 3-A",
-        "room": "Lab 2",
-        "days": ["Monday", "Wednesday", "Friday"],
-        "startTime": "4:00 PM",
-        "endTime": "5:30 PM",
-        "color": "amber"
-      }
-    ]
+    "schedule": []
   },
   {
     "id": "2",
@@ -106,45 +52,31 @@
       "dateHired": "2015-03-15",
       "status": "Active"
     },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs104", "cs203", "cs302", "cs303", "cs304",
+        "cs307", "cs402", "cs403", "it203", "it303"
+      ],
+      "unavailableDays": ["Saturday"],
+      "preferredDays": ["Tuesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "09:00", "end": "18:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 3,
+      "notes": "CS systems & security specialist. Digital Logic, OS, Networks, Automata. Not available Saturday."
+    },
     "education": [
-      {
-        "id": "1",
-        "degree": "PhD Computer Science",
-        "school": "DLSU",
-        "year": "2014"
-      }
+      { "id": "1", "degree": "PhD Computer Science", "school": "DLSU", "year": "2014" }
     ],
     "credentials": [
-      {
-        "id": "1",
-        "type": "license",
-        "licenseType": "PRC License — Electronics and Communications Engineering",
-        "issuingAuthority": "Professional Regulation Commission",
-        "yearObtained": "2010"
-      }
+      { "id": "1", "type": "license", "licenseType": "PRC License — ECE", "issuingAuthority": "PRC", "yearObtained": "2010" }
     ],
     "research": [
-      {
-        "id": "1",
-        "title": "Cybersecurity in Philippine HEIs",
-        "journal": "CHED Research Compendium",
-        "year": "2022",
-        "type": "Publication"
-      }
+      { "id": "1", "title": "Cybersecurity in Philippine HEIs", "journal": "CHED Research Compendium", "year": "2022", "type": "Publication" }
     ],
-    "schedule": [
-      {
-        "id": "1",
-        "subjectCode": "CS 312",
-        "subject": "Operating Systems",
-        "section": "BSCS 3-B",
-        "room": "Room 4",
-        "days": ["Tuesday", "Thursday"],
-        "startTime": "10:00 AM",
-        "endTime": "12:00 PM",
-        "color": "purple"
-      }
-    ]
+    "schedule": []
   },
   {
     "id": "3",
@@ -159,13 +91,22 @@
       "dateHired": "2020-08-01",
       "status": "Active"
     },
+    "preferences": {
+      "subjectSpecializations": [
+        "math101", "math102", "cs101", "cs104", "ge101", "ge102"
+      ],
+      "unavailableDays": ["Monday", "Wednesday"],
+      "preferredDays": ["Tuesday", "Thursday", "Friday"],
+      "unavailableTimeSlots": ["16:00-17:00", "17:00-18:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "15:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "medium",
+      "maxClassesPerDay": 2,
+      "maxConsecutiveHours": 3,
+      "notes": "Part-time. Handles intro math and GE for CS 1st year. Only available TTh and Friday mornings."
+    },
     "education": [
-      {
-        "id": "1",
-        "degree": "MS Information Technology",
-        "school": "TUP",
-        "year": "2019"
-      }
+      { "id": "1", "degree": "MS Information Technology", "school": "TUP", "year": "2019" }
     ],
     "credentials": [],
     "research": [],
@@ -183,6 +124,21 @@
       "employmentType": "Full-time",
       "dateHired": "2019-01-10",
       "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "it101", "it102", "it103", "it201", "it202",
+        "it204", "it205", "cs206"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "09:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "medium",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "IT web and database specialist. Handles introductory programming for IT program. Flexible MTWTh."
     },
     "education": [],
     "credentials": [],
@@ -202,6 +158,20 @@
       "dateHired": "2021-06-01",
       "status": "Active"
     },
+    "preferences": {
+      "subjectSpecializations": [
+        "ge101", "ge102", "ge103", "ge104", "ge201", "ge202"
+      ],
+      "unavailableDays": ["Monday", "Friday"],
+      "preferredDays": ["Tuesday", "Wednesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00", "17:00-18:00"],
+      "preferredTimeRange": { "start": "09:00", "end": "16:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "low",
+      "maxClassesPerDay": 2,
+      "maxConsecutiveHours": 2,
+      "notes": "Part-time. Dedicated GE instructor covering all GE subjects. Limited to TWTh morning-afternoon."
+    },
     "education": [],
     "credentials": [],
     "research": [],
@@ -220,9 +190,369 @@
       "dateHired": "2017-09-01",
       "status": "Active"
     },
+    "preferences": {
+      "subjectSpecializations": [
+        "it104", "it203", "it301", "it302", "it303",
+        "it304", "it305", "it306", "it307", "it308"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "unavailableTimeSlots": [],
+      "preferredTimeRange": { "start": "07:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 4,
+      "maxConsecutiveHours": 5,
+      "notes": "Senior IT faculty. Networks, security, cloud, and IT 3rd-year subjects. Highly flexible. Heavy loader."
+    },
     "education": [],
     "credentials": [],
     "research": [],
+    "schedule": []
+  },
+  {
+    "id": "7",
+    "personal": {
+      "firstName": "Carlos",
+      "lastName": "Mendoza",
+      "email": "cmendoza@tup.edu.ph",
+      "phone": "+63 918 456 7890",
+      "employeeId": "TUP-2016-0024",
+      "designation": "Associate Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2016-07-01",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "is101", "is102", "is103", "is104",
+        "is201", "is202", "is203", "is204", "it206"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "17:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "IS program core specialist. Handles IS 1st and 2nd year curriculum including ERP and database admin. Prefers MTWTh."
+    },
+    "education": [
+      { "id": "1", "degree": "Master of Science in Information Systems", "school": "APC", "year": "2015" },
+      { "id": "2", "degree": "BS Information Systems", "school": "TUP", "year": "2010" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "Civil Service Eligibility", "issuingAuthority": "Civil Service Commission", "yearObtained": "2011" }
+    ],
+    "research": [
+      { "id": "1", "title": "ERP Adoption Challenges in Philippine SMEs", "journal": "Philippine Journal of IS", "year": "2022", "type": "Publication" }
+    ],
+    "schedule": []
+  },
+  {
+    "id": "8",
+    "personal": {
+      "firstName": "Diana",
+      "lastName": "Flores",
+      "email": "dflores@tup.edu.ph",
+      "phone": "+63 919 567 8901",
+      "employeeId": "TUP-2014-0009",
+      "designation": "Assistant Professor II",
+      "employmentType": "Full-time",
+      "dateHired": "2014-11-03",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "is205", "is206", "is301", "is302", "is303",
+        "is304", "is305", "is306", "is307", "is308",
+        "is401", "is402", "is403", "is404", "is405"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "unavailableTimeSlots": ["16:00-17:00", "17:00-18:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "16:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "IS advanced and capstone specialist. Handles IS 3rd and 4th year including business intelligence, governance, audit. No late afternoon slots."
+    },
+    "education": [
+      { "id": "1", "degree": "PhD Information Systems", "school": "DLSU", "year": "2020" },
+      { "id": "2", "degree": "MS Information Technology", "school": "TUP", "year": "2013" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "PRC License — Computer Science", "issuingAuthority": "PRC", "yearObtained": "2015" }
+    ],
+    "research": [
+      { "id": "1", "title": "Business Intelligence Maturity in Philippine HEIs", "journal": "Int. Journal of IS", "year": "2023", "type": "Publication" }
+    ],
+    "schedule": []
+  },
+  {
+    "id": "9",
+    "personal": {
+      "firstName": "Felix",
+      "lastName": "Torres",
+      "email": "ftorres@tup.edu.ph",
+      "phone": "+63 920 678 9012",
+      "employeeId": "TUP-2019-0063",
+      "designation": "Instructor IV",
+      "employmentType": "Full-time",
+      "dateHired": "2019-06-15",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "math101", "math102", "math201", "math202",
+        "cs203", "cs204"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Wednesday", "Friday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "17:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "medium",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 3,
+      "notes": "Mathematics and theoretical CS specialist. Handles all MATH subjects and discrete/algorithm courses. Prefers MWF lecture rooms."
+    },
+    "education": [
+      { "id": "1", "degree": "MS Applied Mathematics", "school": "UP Diliman", "year": "2018" },
+      { "id": "2", "degree": "BS Computer Science", "school": "TUP", "year": "2013" }
+    ],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "10",
+    "personal": {
+      "firstName": "Grace",
+      "lastName": "Tan",
+      "email": "gtan@tup.edu.ph",
+      "phone": "+63 921 789 0123",
+      "employeeId": "TUP-2016-0028",
+      "designation": "Associate Professor II",
+      "employmentType": "Full-time",
+      "dateHired": "2016-08-01",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs305", "cs306", "cs308", "cs401", "cs404", "cs405"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Tuesday", "Wednesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "09:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "CS AI/ML and advanced graphics specialist. Handles CS 3rd year advanced labs and 4th year capstone. Preferred lab rooms only."
+    },
+    "education": [
+      { "id": "1", "degree": "Doctor of Computer Science", "school": "DLSU", "year": "2022" },
+      { "id": "2", "degree": "MS Computer Science", "school": "UP Diliman", "year": "2015" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "PRC License — Computer Science", "issuingAuthority": "PRC", "yearObtained": "2017" }
+    ],
+    "research": [
+      { "id": "1", "title": "Federated Learning in Resource-Constrained Environments", "journal": "IEEE Access", "year": "2023", "type": "Publication" }
+    ],
+    "schedule": []
+  },
+  {
+    "id": "11",
+    "personal": {
+      "firstName": "Henry",
+      "lastName": "Lim",
+      "email": "hlim@tup.edu.ph",
+      "phone": "+63 922 890 1234",
+      "employeeId": "TUP-2013-0007",
+      "designation": "Professor II",
+      "employmentType": "Full-time",
+      "dateHired": "2013-05-20",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs401", "cs404", "it302", "it304", "it305",
+        "it401", "it402", "it403", "it404", "it405"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "unavailableTimeSlots": [],
+      "preferredTimeRange": { "start": "07:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 4,
+      "maxConsecutiveHours": 5,
+      "notes": "Senior professor. IT capstone and integration specialist. Handles IT 3rd-4th year advanced subjects. Highly flexible."
+    },
+    "education": [
+      { "id": "1", "degree": "PhD IT Management", "school": "AIM", "year": "2012" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "Civil Service Eligibility", "issuingAuthority": "Civil Service Commission", "yearObtained": "2005" }
+    ],
+    "research": [
+      { "id": "1", "title": "Cloud Adoption Roadmap for Philippine Universities", "journal": "CHED Research Journal", "year": "2021", "type": "Publication" }
+    ],
+    "schedule": []
+  },
+  {
+    "id": "12",
+    "personal": {
+      "firstName": "Isabel",
+      "lastName": "Ramos",
+      "email": "iramos@tup.edu.ph",
+      "phone": "",
+      "employeeId": "TUP-2022-0101",
+      "designation": "Instructor II",
+      "employmentType": "Part-time",
+      "dateHired": "2022-08-01",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "ge103", "ge104", "ge201", "ge202",
+        "is101", "is103", "is205", "is206"
+      ],
+      "unavailableDays": ["Monday", "Wednesday", "Friday"],
+      "preferredDays": ["Tuesday", "Thursday", "Saturday"],
+      "unavailableTimeSlots": ["07:00-08:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "14:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "low",
+      "maxClassesPerDay": 2,
+      "maxConsecutiveHours": 2,
+      "notes": "Part-time. Handles GE electives and IS intro/ethics subjects. Available TTh Saturday mornings only."
+    },
+    "education": [
+      { "id": "1", "degree": "MS Library and Information Science", "school": "UST", "year": "2021" }
+    ],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "13",
+    "personal": {
+      "firstName": "Jerome",
+      "lastName": "Bautista",
+      "email": "jbautista@tup.edu.ph",
+      "phone": "+63 923 901 2345",
+      "employeeId": "TUP-2018-0048",
+      "designation": "Assistant Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2018-03-01",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs101", "cs102", "cs103", "cs301", "cs302",
+        "it101", "it102", "it103", "is102"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "medium",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "Cross-program programming instructor. Handles introductory computing across BSCS, BSIT, and BSIS. Also handles CS software engineering and OS."
+    },
+    "education": [
+      { "id": "1", "degree": "MS Computer Science", "school": "TUP", "year": "2017" },
+      { "id": "2", "degree": "BS Computer Engineering", "school": "TUP", "year": "2012" }
+    ],
+    "credentials": [],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "14",
+    "personal": {
+      "firstName": "Karen",
+      "lastName": "Villanueva",
+      "email": "kvillanueva@tup.edu.ph",
+      "phone": "+63 924 012 3456",
+      "employeeId": "TUP-2017-0036",
+      "designation": "Assistant Professor II",
+      "employmentType": "Full-time",
+      "dateHired": "2017-06-15",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs301", "cs304", "cs305", "it204", "it206",
+        "it307", "is201", "is302"
+      ],
+      "unavailableDays": ["Saturday"],
+      "preferredDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "08:00", "end": "17:00" },
+      "preferredRoomTypes": ["lecture"],
+      "priority": "medium",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 3,
+      "notes": "Software engineering and project management specialist. Bridges CS and IS curriculum. Not available Saturday."
+    },
+    "education": [
+      { "id": "1", "degree": "MS Software Engineering", "school": "PLM", "year": "2016" },
+      { "id": "2", "degree": "BS Computer Science", "school": "FEU", "year": "2011" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "Civil Service Eligibility", "issuingAuthority": "Civil Service Commission", "yearObtained": "2012" }
+    ],
+    "research": [],
+    "schedule": []
+  },
+  {
+    "id": "15",
+    "personal": {
+      "firstName": "Luis",
+      "lastName": "Aquino",
+      "email": "laquino@tup.edu.ph",
+      "phone": "+63 925 123 4567",
+      "employeeId": "TUP-2015-0017",
+      "designation": "Associate Professor I",
+      "employmentType": "Full-time",
+      "dateHired": "2015-09-01",
+      "status": "Active"
+    },
+    "preferences": {
+      "subjectSpecializations": [
+        "cs402", "cs403", "cs405",
+        "it404", "it405",
+        "is401", "is402", "is403", "is404", "is405"
+      ],
+      "unavailableDays": [],
+      "preferredDays": ["Monday", "Wednesday", "Friday"],
+      "unavailableTimeSlots": ["07:00-08:00"],
+      "preferredTimeRange": { "start": "09:00", "end": "18:00" },
+      "preferredRoomTypes": ["lab", "lecture"],
+      "priority": "high",
+      "maxClassesPerDay": 3,
+      "maxConsecutiveHours": 4,
+      "notes": "Cross-program capstone and ethics coordinator. Handles 4th year internship, IS governance, and parallel computing. Prefers MWF."
+    },
+    "education": [
+      { "id": "1", "degree": "PhD Technology Management", "school": "DLSU", "year": "2019" },
+      { "id": "2", "degree": "MS Computer Science", "school": "TUP", "year": "2014" }
+    ],
+    "credentials": [
+      { "id": "1", "type": "license", "licenseType": "PRC License — Computer Science", "issuingAuthority": "PRC", "yearObtained": "2016" }
+    ],
+    "research": [
+      { "id": "1", "title": "IT Governance Frameworks in Philippine State Universities", "journal": "Asian Journal of IS", "year": "2022", "type": "Publication" }
+    ],
     "schedule": []
   }
 ]

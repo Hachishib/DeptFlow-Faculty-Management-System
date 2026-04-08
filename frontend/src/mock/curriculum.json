@@ -1,0 +1,412 @@
+[
+  {
+    "program": "BSCS",
+    "sections": [
+      {
+        "yearLevel": 1,
+        "semester": 1,
+        "section": "A",
+        "label": "BSCS 1-A",
+        "subjectIds": [
+          "cs101",
+          "cs102",
+          "math101",
+          "ge101",
+          "ge102"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 1,
+        "section": "B",
+        "label": "BSCS 1-B",
+        "subjectIds": [
+          "cs101",
+          "cs102",
+          "math101",
+          "ge101",
+          "ge102"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 2,
+        "section": "A",
+        "label": "BSCS 1-A",
+        "subjectIds": [
+          "cs103",
+          "cs104",
+          "math102",
+          "ge103",
+          "ge104"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 2,
+        "section": "B",
+        "label": "BSCS 1-B",
+        "subjectIds": [
+          "cs103",
+          "cs104",
+          "math102",
+          "ge103",
+          "ge104"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 1,
+        "section": "A",
+        "label": "BSCS 2-A",
+        "subjectIds": [
+          "cs201",
+          "cs202",
+          "cs203",
+          "math201",
+          "ge201"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 1,
+        "section": "B",
+        "label": "BSCS 2-B",
+        "subjectIds": [
+          "cs201",
+          "cs202",
+          "cs203",
+          "math201",
+          "ge201"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 2,
+        "section": "A",
+        "label": "BSCS 2-A",
+        "subjectIds": [
+          "cs204",
+          "cs205",
+          "cs206",
+          "math202",
+          "ge202"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 2,
+        "section": "B",
+        "label": "BSCS 2-B",
+        "subjectIds": [
+          "cs204",
+          "cs205",
+          "cs206",
+          "math202",
+          "ge202"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 1,
+        "section": "A",
+        "label": "BSCS 3-A",
+        "subjectIds": [
+          "cs301",
+          "cs302",
+          "cs303",
+          "cs304"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 2,
+        "section": "A",
+        "label": "BSCS 3-A",
+        "subjectIds": [
+          "cs305",
+          "cs306",
+          "cs307",
+          "cs308"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 1,
+        "section": "A",
+        "label": "BSCS 4-A",
+        "subjectIds": [
+          "cs401",
+          "cs402",
+          "cs403"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 2,
+        "section": "A",
+        "label": "BSCS 4-A",
+        "subjectIds": [
+          "cs404",
+          "cs405"
+        ]
+      }
+    ]
+  },
+  {
+    "program": "BSIT",
+    "sections": [
+      {
+        "yearLevel": 1,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIT 1-A",
+        "subjectIds": [
+          "it101",
+          "it102",
+          "math101",
+          "ge101",
+          "ge102"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 1,
+        "section": "B",
+        "label": "BSIT 1-B",
+        "subjectIds": [
+          "it101",
+          "it102",
+          "math101",
+          "ge101",
+          "ge102"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIT 1-A",
+        "subjectIds": [
+          "it103",
+          "it104",
+          "math102",
+          "ge103",
+          "ge104"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 2,
+        "section": "B",
+        "label": "BSIT 1-B",
+        "subjectIds": [
+          "it103",
+          "it104",
+          "math102",
+          "ge103",
+          "ge104"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIT 2-A",
+        "subjectIds": [
+          "it201",
+          "it202",
+          "it203",
+          "math201",
+          "ge201"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 1,
+        "section": "B",
+        "label": "BSIT 2-B",
+        "subjectIds": [
+          "it201",
+          "it202",
+          "it203",
+          "math201",
+          "ge201"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIT 2-A",
+        "subjectIds": [
+          "it204",
+          "it205",
+          "it206",
+          "math202",
+          "ge202"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 2,
+        "section": "B",
+        "label": "BSIT 2-B",
+        "subjectIds": [
+          "it204",
+          "it205",
+          "it206",
+          "math202",
+          "ge202"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIT 3-A",
+        "subjectIds": [
+          "it301",
+          "it302",
+          "it303",
+          "it304"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIT 3-A",
+        "subjectIds": [
+          "it305",
+          "it306",
+          "it307",
+          "it308"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIT 4-A",
+        "subjectIds": [
+          "it401",
+          "it402",
+          "it403"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIT 4-A",
+        "subjectIds": [
+          "it404",
+          "it405"
+        ]
+      }
+    ]
+  },
+  {
+    "program": "BSIS",
+    "sections": [
+      {
+        "yearLevel": 1,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIS 1-A",
+        "subjectIds": [
+          "is101",
+          "is102",
+          "math101",
+          "ge101",
+          "ge102"
+        ]
+      },
+      {
+        "yearLevel": 1,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIS 1-A",
+        "subjectIds": [
+          "is103",
+          "is104",
+          "math102",
+          "ge103",
+          "ge104"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIS 2-A",
+        "subjectIds": [
+          "is201",
+          "is202",
+          "is203",
+          "math201",
+          "ge201"
+        ]
+      },
+      {
+        "yearLevel": 2,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIS 2-A",
+        "subjectIds": [
+          "is204",
+          "is205",
+          "is206",
+          "math202",
+          "ge202"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIS 3-A",
+        "subjectIds": [
+          "is301",
+          "is302",
+          "is303",
+          "is304"
+        ]
+      },
+      {
+        "yearLevel": 3,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIS 3-A",
+        "subjectIds": [
+          "is305",
+          "is306",
+          "is307",
+          "is308"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 1,
+        "section": "A",
+        "label": "BSIS 4-A",
+        "subjectIds": [
+          "is401",
+          "is402",
+          "is403"
+        ]
+      },
+      {
+        "yearLevel": 4,
+        "semester": 2,
+        "section": "A",
+        "label": "BSIS 4-A",
+        "subjectIds": [
+          "is404",
+          "is405"
+        ]
+      }
+    ]
+  }
+]

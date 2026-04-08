@@ -1,9 +1,1297 @@
 [
-  { "id": "1", "code": "CS101", "name": "Introduction to Computing",    "units": 3 },
-  { "id": "2", "code": "CS201", "name": "Data Structures & Algorithms", "units": 3 },
-  { "id": "3", "code": "CS301", "name": "Software Engineering",         "units": 3 },
-  { "id": "4", "code": "IT201", "name": "Web Development",              "units": 3 },
-  { "id": "5", "code": "IT301", "name": "Database Management",          "units": 3 },
-  { "id": "6", "code": "CS401", "name": "Operating Systems",            "units": 3 },
-  { "id": "7", "code": "IT401", "name": "Network Administration",       "units": 3 }
+  {
+    "id": "math101",
+    "code": "MATH 101",
+    "name": "Mathematics in the Modern World",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "math102",
+    "code": "MATH 102",
+    "name": "Calculus I",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "math201",
+    "code": "MATH 201",
+    "name": "Discrete Mathematics",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "math202",
+    "code": "MATH 202",
+    "name": "Probability and Statistics",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge101",
+    "code": "GE 101",
+    "name": "Purposive Communication",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge102",
+    "code": "GE 102",
+    "name": "Readings in Philippine History",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge103",
+    "code": "GE 103",
+    "name": "The Contemporary World",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge104",
+    "code": "GE 104",
+    "name": "Ethics",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge201",
+    "code": "GE 201",
+    "name": "Art Appreciation",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "ge202",
+    "code": "GE 202",
+    "name": "Science, Technology and Society",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSCS",
+      "BSIT",
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "manual-faculty"
+  },
+  {
+    "id": "cs101",
+    "code": "CS 101",
+    "name": "Introduction to Computing",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs102",
+    "code": "CS 102",
+    "name": "Computer Programming 1",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs103",
+    "code": "CS 103",
+    "name": "Computer Programming 2",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs104",
+    "code": "CS 104",
+    "name": "Digital Logic Design",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs201",
+    "code": "CS 201",
+    "name": "Data Structures and Algorithms",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs202",
+    "code": "CS 202",
+    "name": "Object-Oriented Programming",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs203",
+    "code": "CS 203",
+    "name": "Computer Organization & Architecture",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs204",
+    "code": "CS 204",
+    "name": "Algorithm Analysis and Design",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs205",
+    "code": "CS 205",
+    "name": "Database Systems",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs206",
+    "code": "CS 206",
+    "name": "Web Development",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs301",
+    "code": "CS 301",
+    "name": "Software Engineering",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs302",
+    "code": "CS 302",
+    "name": "Operating Systems",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs303",
+    "code": "CS 303",
+    "name": "Computer Networks",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs304",
+    "code": "CS 304",
+    "name": "Programming Languages",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs305",
+    "code": "CS 305",
+    "name": "Artificial Intelligence",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs306",
+    "code": "CS 306",
+    "name": "Machine Learning",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs307",
+    "code": "CS 307",
+    "name": "Automata Theory",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs308",
+    "code": "CS 308",
+    "name": "Computer Graphics",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs401",
+    "code": "CS 401",
+    "name": "Capstone Project 1",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs402",
+    "code": "CS 402",
+    "name": "Information Assurance & Security",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs403",
+    "code": "CS 403",
+    "name": "Parallel and Distributed Computing",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs404",
+    "code": "CS 404",
+    "name": "Capstone Project 2",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "cs405",
+    "code": "CS 405",
+    "name": "Internship / OJT",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSCS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it101",
+    "code": "IT 101",
+    "name": "Introduction to Information Technology",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it102",
+    "code": "IT 102",
+    "name": "Computer Programming 1",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it103",
+    "code": "IT 103",
+    "name": "Computer Programming 2",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it104",
+    "code": "IT 104",
+    "name": "Computer Hardware Fundamentals",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it201",
+    "code": "IT 201",
+    "name": "Web Development",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it202",
+    "code": "IT 202",
+    "name": "Database Management",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it203",
+    "code": "IT 203",
+    "name": "Networking Fundamentals",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it204",
+    "code": "IT 204",
+    "name": "Systems Analysis and Design",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it205",
+    "code": "IT 205",
+    "name": "Object-Oriented Programming",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it206",
+    "code": "IT 206",
+    "name": "Human-Computer Interaction",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it301",
+    "code": "IT 301",
+    "name": "Network Administration",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it302",
+    "code": "IT 302",
+    "name": "Mobile App Development",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it303",
+    "code": "IT 303",
+    "name": "Information Assurance & Security",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it304",
+    "code": "IT 304",
+    "name": "Cloud Computing",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it305",
+    "code": "IT 305",
+    "name": "Integrated Programming & Tech",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it306",
+    "code": "IT 306",
+    "name": "Technopreneurship",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it307",
+    "code": "IT 307",
+    "name": "IT Project Management",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it308",
+    "code": "IT 308",
+    "name": "Social Issues & Professional Practice",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it401",
+    "code": "IT 401",
+    "name": "Capstone Project 1",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it402",
+    "code": "IT 402",
+    "name": "System Integration & Architecture",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it403",
+    "code": "IT 403",
+    "name": "IT Infrastructure & Virtualization",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it404",
+    "code": "IT 404",
+    "name": "Capstone Project 2",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "it405",
+    "code": "IT 405",
+    "name": "Internship / OJT",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSIT"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is101",
+    "code": "IS 101",
+    "name": "Introduction to Information Systems",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is102",
+    "code": "IS 102",
+    "name": "Computer Programming Fundamentals",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is103",
+    "code": "IS 103",
+    "name": "Business Process Management",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is104",
+    "code": "IS 104",
+    "name": "Data Management",
+    "units": 3,
+    "yearLevel": 1,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is201",
+    "code": "IS 201",
+    "name": "Systems Analysis and Design",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is202",
+    "code": "IS 202",
+    "name": "Database Administration",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is203",
+    "code": "IS 203",
+    "name": "Enterprise Resource Planning",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is204",
+    "code": "IS 204",
+    "name": "Web Systems & Technology",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is205",
+    "code": "IS 205",
+    "name": "IS Strategy, Management & Acquisition",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is206",
+    "code": "IS 206",
+    "name": "Human-Computer Interaction",
+    "units": 3,
+    "yearLevel": 2,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is301",
+    "code": "IS 301",
+    "name": "Applications Development",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is302",
+    "code": "IS 302",
+    "name": "IS Project Management",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is303",
+    "code": "IS 303",
+    "name": "Business Intelligence",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is304",
+    "code": "IS 304",
+    "name": "Information Assurance & Security",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is305",
+    "code": "IS 305",
+    "name": "Advanced Database Systems",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": true,
+    "splitPattern": [
+      1,
+      2
+    ],
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is306",
+    "code": "IS 306",
+    "name": "Technopreneurship",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is307",
+    "code": "IS 307",
+    "name": "Social & Professional Issues in IS",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is308",
+    "code": "IS 308",
+    "name": "Quantitative Methods",
+    "units": 3,
+    "yearLevel": 3,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is401",
+    "code": "IS 401",
+    "name": "Capstone Project 1",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is402",
+    "code": "IS 402",
+    "name": "IS Audit and Controls",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is403",
+    "code": "IS 403",
+    "name": "IT Governance",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 1,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is404",
+    "code": "IS 404",
+    "name": "Capstone Project 2",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lab",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  },
+  {
+    "id": "is405",
+    "code": "IS 405",
+    "name": "Internship / OJT",
+    "units": 3,
+    "yearLevel": 4,
+    "semester": 2,
+    "programs": [
+      "BSIS"
+    ],
+    "facilityType": "lecture",
+    "canSplit": false,
+    "splitPattern": null,
+    "assignmentMode": "auto"
+  }
 ]
